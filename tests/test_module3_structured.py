@@ -421,12 +421,12 @@ def main():
         
         # Fallback to old structure if no jobs found
         if not job_files:
-    for search_dir in [output_dir, output_dir / "module1"]:
-        if search_dir.exists():
-            for file in search_dir.glob("analysis_job*.json"):
-                job_name = file.stem.split("_")[1]  # Extract job1, job2, etc.
-                if job_name not in [f[1] for f in job_files]:
-                    job_files.append((file, job_name))
+            for search_dir in [output_dir, output_dir / "module1"]:
+                if search_dir.exists():
+                    for file in search_dir.glob("analysis_job*.json"):
+                        job_name = file.stem.split("_")[1]  # Extract job1, job2, etc.
+                        if job_name not in [f[1] for f in job_files]:
+                            job_files.append((file, job_name))
         
         # Limit to only 1 job for testing (original behavior)
         job_files = job_files[:1]  # Only test the first job

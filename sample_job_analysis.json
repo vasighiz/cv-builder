@@ -1,0 +1,162 @@
+{
+  "keywords": {
+    "technical_skills": [
+      "Python",
+      "TensorFlow",
+      "PyTorch",
+      "SQL",
+      "Pandas",
+      "NumPy"
+    ],
+    "soft_skills": [
+      "Communication",
+      "Problem-solving"
+    ],
+    "tools_technologies": [
+      "AWS",
+      "GCP",
+      "MLOps"
+    ],
+    "responsibilities": [
+      "Developing machine learning models",
+      "Analyzing large datasets",
+      "Building predictive models for customer behavior analysis",
+      "Collaborating with engineering teams to deploy models",
+      "Communicating findings to stakeholders"
+    ],
+    "requirements": [
+      "5+ years experience in data science or machine learning",
+      "Strong programming skills in Python and SQL",
+      "Experience with deep learning frameworks",
+      "Excellent communication and problem-solving skills",
+      "Master's degree in Computer Science, Statistics, or related field",
+      "Experience with cloud platforms (AWS, GCP)",
+      "Knowledge of MLOps and model deployment",
+      "Experience with A/B testing and experimentation"
+    ],
+    "keywords_frequency": {
+      "data science": 1,
+      "machine learning": 2,
+      "Python": 2,
+      "TensorFlow": 1,
+      "PyTorch": 1,
+      "SQL": 2,
+      "Pandas": 1,
+      "NumPy": 1,
+      "customer behavior analysis": 1,
+      "communication": 1,
+      "problem-solving": 1,
+      "AWS": 1,
+      "GCP": 1,
+      "MLOps": 1,
+      "A/B testing": 1,
+      "experimentation": 1
+    },
+    "extracted_skills": [
+      "Model Deployment",
+      "Master's Degree in Computer Science, Statistics, or related field",
+      "Deep Learning Frameworks",
+      "Communication Skills",
+      "Cloud Platforms (AWS, GCP)",
+      "Problem-Solving Skills",
+      "Python",
+      "Data Science",
+      "A/B Testing",
+      "MLOps",
+      "Machine Learning",
+      "Experimentation",
+      "SQL"
+    ]
+  },
+  "role_analysis": {
+    "role_category": "Data Scientist",
+    "seniority_level": "Senior",
+    "industry_focus": "AI/ML",
+    "experience_years": "5+"
+  },
+  "insights": {
+    "total_technical_skills": 6,
+    "total_soft_skills": 2,
+    "total_tools": 3,
+    "total_extracted_skills": 13,
+    "most_frequent_keywords": [
+      [
+        "machine learning",
+        2
+      ],
+      [
+        "Python",
+        2
+      ],
+      [
+        "SQL",
+        2
+      ],
+      [
+        "data science",
+        1
+      ],
+      [
+        "TensorFlow",
+        1
+      ]
+    ],
+    "skill_categories": {
+      "programming_languages": [
+        "Python",
+        "TensorFlow",
+        "PyTorch"
+      ],
+      "frameworks_libraries": [
+        "Pandas",
+        "NumPy"
+      ],
+      "databases": [],
+      "other_technical_skills": [
+        "SQL"
+      ],
+      "cloud_platforms": [
+        "AWS",
+        "GCP"
+      ],
+      "other_tools": [
+        "MLOps"
+      ],
+      "extracted_technical_skills": [
+        "Model Deployment",
+        "Master's Degree in Computer Science, Statistics, or related field",
+        "Deep Learning Frameworks",
+        "Cloud Platforms (AWS, GCP)",
+        "Problem-Solving Skills",
+        "A/B Testing",
+        "Machine Learning",
+        "Experimentation"
+      ],
+      "extracted_tools": [],
+      "extracted_methodologies": [],
+      "extracted_certifications": [],
+      "others": [
+        "Communication",
+        "Problem-solving",
+        "Developing machine learning models",
+        "Analyzing large datasets",
+        "Building predictive models for customer behavior analysis",
+        "Collaborating with engineering teams to deploy models",
+        "Communicating findings to stakeholders",
+        "5+ years experience in data science or machine learning",
+        "Strong programming skills in Python and SQL",
+        "Experience with deep learning frameworks",
+        "Excellent communication and problem-solving skills",
+        "Master's degree in Computer Science, Statistics, or related field",
+        "Experience with cloud platforms (AWS, GCP)",
+        "Knowledge of MLOps and model deployment",
+        "Experience with A/B testing and experimentation",
+        "Communication Skills",
+        "Data Science"
+      ]
+    }
+  },
+  "recommendations": [
+    "👑 Emphasize leadership and project management experience"
+  ]
+}

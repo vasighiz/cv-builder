@@ -7,7 +7,7 @@ import json
 import re
 from typing import Dict, List, Any, Tuple, Optional
 from dataclasses import dataclass
-from openai import OpenAI
+from anthropic import Anthropic
 import pandas as pd
 
 
@@ -39,13 +39,13 @@ class ResumeKeywordMatcher:
     
     def __init__(self, api_key: str):
         """
-        Initialize the matcher with OpenAI API key
+        Initialize the matcher with Anthropic API key
         
         Args:
-            api_key (str): OpenAI API key
+            api_key (str): Anthropic API key
         """
-        self.client = OpenAI(api_key=api_key)
-        self.model = "gpt-4o"
+        self.client = Anthropic(api_key=api_key)
+        self.model = "claude-3-haiku-20240307"
         
     def parse_resume(self, resume_text: str) -> Dict[str, Any]:
         """
@@ -109,17 +109,19 @@ class ResumeKeywordMatcher:
         """
         
         try:
-            response = self.client.chat.completions.create(
+            response = self.client.messages.create(
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are an expert resume parser specializing in tech industry resumes."},
-                    {"role": "user", "content": prompt}
-                ],
+                max_tokens=2000,
                 temperature=0.2,
-                max_tokens=2000
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
             )
             
-            content = response.choices[0].message.content
+            content = response.content[0].text
             return json.loads(content)
             
         except Exception as e:
@@ -480,7 +482,7 @@ def main():
     """
     
     # Initialize matcher
-    api_key = "your_openai_api_key_here"  # Replace with actual API key
+    api_key = "your_anthropic_api_key_here"  # Replace with actual API key
     matcher = ResumeKeywordMatcher(api_key)
     
     # Parse resume

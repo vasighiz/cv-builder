@@ -7,7 +7,11 @@ import json
 import os
 from typing import Dict, List, Any
 from dataclasses import dataclass, asdict
-from openai import OpenAI
+from anthropic import Anthropic
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 @dataclass
@@ -19,6 +23,7 @@ class JobKeywords:
     responsibilities: List[str]
     requirements: List[str]
     keywords_frequency: Dict[str, int]
+    extracted_skills: List[str]  # New field for skills extracted from descriptions
 
 
 class JobDescriptionAnalyzerMVP:
@@ -31,15 +36,15 @@ class JobDescriptionAnalyzerMVP:
         Initialize the analyzer
         
         Args:
-            api_key (str): OpenAI API key (optional, can use env var)
+            api_key (str): Anthropic API key (optional, can use env var)
         """
         # Get API key from parameter or environment variable
-        self.api_key = api_key or os.getenv('OPENAI_API_KEY')
+        self.api_key = api_key or os.getenv('ANTHROPIC_API_KEY')
         if not self.api_key:
-            raise ValueError("OpenAI API key is required. Set OPENAI_API_KEY environment variable or pass api_key parameter.")
+            raise ValueError("Anthropic API key is required. Set ANTHROPIC_API_KEY environment variable or pass api_key parameter.")
         
-        self.client = OpenAI(api_key=self.api_key)
-        self.model = "gpt-4o"
+        self.client = Anthropic(api_key=self.api_key)
+        self.model = "claude-3-haiku-20240307"
         
     def analyze_job_description(self, job_description: str) -> Dict[str, Any]:
         """
@@ -55,6 +60,12 @@ class JobDescriptionAnalyzerMVP:
         
         # Extract keywords
         keywords = self._extract_keywords(job_description)
+        
+        # Extract skills from descriptions
+        skills_from_descriptions = self._extract_skills_from_descriptions(keywords.responsibilities, keywords.requirements)
+        
+        # Update keywords with extracted skills
+        keywords.extracted_skills = skills_from_descriptions
         
         # Analyze role type
         role_analysis = self._classify_role(job_description)
@@ -105,17 +116,19 @@ class JobDescriptionAnalyzerMVP:
         """
         
         try:
-            response = self.client.chat.completions.create(
+            response = self.client.messages.create(
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are an expert job description analyzer. Return only valid JSON."},
-                    {"role": "user", "content": prompt}
-                ],
+                max_tokens=1000,
                 temperature=0.2,
-                max_tokens=1000
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
             )
             
-            content = response.choices[0].message.content.strip()
+            content = response.content[0].text.strip()
             
             # Clean up the response (remove markdown if present)
             if content.startswith("```json"):
@@ -123,7 +136,26 @@ class JobDescriptionAnalyzerMVP:
             if content.endswith("```"):
                 content = content[:-3]
             
-            parsed_data = json.loads(content)
+            # Try to parse JSON with better error handling
+            try:
+                parsed_data = json.loads(content)
+            except json.JSONDecodeError as json_error:
+                print(f"⚠️  JSON parsing error: {json_error}")
+                print(f"Raw response: {content[:200]}...")
+                
+                # Try to extract JSON from the response using a more flexible approach
+                import re
+                json_match = re.search(r'\{.*\}', content, re.DOTALL)
+                if json_match:
+                    try:
+                        parsed_data = json.loads(json_match.group())
+                        print("✅ Successfully extracted JSON from response")
+                    except json.JSONDecodeError:
+                        print("❌ Failed to extract valid JSON, using fallback")
+                        parsed_data = {}
+                else:
+                    print("❌ No JSON found in response, using fallback")
+                    parsed_data = {}
             
             return JobKeywords(
                 technical_skills=parsed_data.get("technical_skills", []),
@@ -131,13 +163,104 @@ class JobDescriptionAnalyzerMVP:
                 tools_technologies=parsed_data.get("tools_technologies", []),
                 responsibilities=parsed_data.get("responsibilities", []),
                 requirements=parsed_data.get("requirements", []),
-                keywords_frequency=parsed_data.get("keywords_frequency", {})
+                keywords_frequency=parsed_data.get("keywords_frequency", {}),
+                extracted_skills=parsed_data.get("extracted_skills", [])
             )
             
         except Exception as e:
             print(f"❌ Error extracting keywords: {e}")
             # Return empty structure on error
-            return JobKeywords([], [], [], [], [], {})
+            return JobKeywords([], [], [], [], [], {}, [])
+    
+    def _extract_skills_from_descriptions(self, responsibilities: List[str], requirements: List[str]) -> List[str]:
+        """
+        Extract specific skills from responsibilities and requirements descriptions
+        """
+        
+        # Combine all descriptions for analysis
+        all_descriptions = responsibilities + requirements
+        if not all_descriptions:
+            return []
+        
+        combined_text = " ".join(all_descriptions)
+        
+        prompt = f"""
+        Analyze the following job descriptions and infer the necessary technical skills, programming languages, and tools required.
+        Focus on understanding the context and extracting skills that are implied by the tasks and requirements.
+        
+        Job Descriptions:
+        {combined_text}
+        
+        Extract and infer the following:
+        - Programming Languages: Identify languages likely needed based on tasks (e.g., Python for data analysis, R for advanced statistics)
+        - Tools & Technologies: Identify tools and technologies implied by the tasks (e.g., SQL for database querying, SAS for statistical analysis)
+        - Statistical Packages: Identify statistical packages likely used (e.g., scikit-learn, R, SAS)
+        - Data Mining Methods: Identify data mining methods and tools implied by the tasks
+        - Scripting & Automation: Identify scripting languages and tools for automation and testing
+        
+        Examples of what to extract:
+        - SQL (for data querying from structured databases)
+        - Python (with packages like scikit-learn, statsmodels, pandas)
+        - R (for advanced statistics)
+        - SAS, SPSS (depending on industry)
+        - Data mining tools and methods
+        - Scripting for automated analysis and testing
+        
+        Return ONLY a JSON array of inferred skills:
+        ["skill1", "skill2", "skill3"]
+        """
+        
+        try:
+            response = self.client.messages.create(
+                model=self.model,
+                max_tokens=500,
+                temperature=0.1,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            )
+            
+            content = response.content[0].text.strip()
+            
+            # Clean up the response
+            if content.startswith("```json"):
+                content = content[7:]
+            if content.endswith("```"):
+                content = content[:-3]
+            
+            # Try to parse JSON with better error handling
+            try:
+                extracted_skills = json.loads(content)
+            except json.JSONDecodeError as json_error:
+                print(f"⚠️  JSON parsing error in skill extraction: {json_error}")
+                print(f"Raw response: {content[:200]}...")
+                
+                # Try to extract JSON array from the response
+                import re
+                array_match = re.search(r'\[.*\]', content, re.DOTALL)
+                if array_match:
+                    try:
+                        extracted_skills = json.loads(array_match.group())
+                        print("✅ Successfully extracted skills array from response")
+                    except json.JSONDecodeError:
+                        print("❌ Failed to extract valid skills array, using fallback")
+                        extracted_skills = []
+                else:
+                    print("❌ No skills array found in response, using fallback")
+                    extracted_skills = []
+            
+            # Ensure it's a list and remove duplicates
+            if isinstance(extracted_skills, list):
+                return list(set(extracted_skills))
+            else:
+                return []
+                
+        except Exception as e:
+            print(f"❌ Error extracting skills from descriptions: {e}")
+            return []
     
     def _classify_role(self, job_description: str) -> Dict[str, str]:
         """
@@ -165,17 +288,19 @@ class JobDescriptionAnalyzerMVP:
         """
         
         try:
-            response = self.client.chat.completions.create(
+            response = self.client.messages.create(
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are an expert job classifier. Return only valid JSON."},
-                    {"role": "user", "content": prompt}
-                ],
+                max_tokens=300,
                 temperature=0.2,
-                max_tokens=300
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
             )
             
-            content = response.choices[0].message.content.strip()
+            content = response.content[0].text.strip()
             
             # Clean up the response
             if content.startswith("```json"):
@@ -199,25 +324,113 @@ class JobDescriptionAnalyzerMVP:
         Generate insights from extracted keywords
         """
         
+        # Improved skill categorization logic
+        programming_languages = []
+        frameworks_libraries = []
+        databases = []
+        other_technical = []
+        others = []
+        
+        for skill in keywords.technical_skills:
+            skill_lower = skill.lower()
+            
+            # Programming languages - more specific matching
+            if any(lang in skill_lower for lang in ['python', 'java', 'javascript', 'js', 'c++', 'c#', 'r', 'go', 'rust', 'scala', 'kotlin', 'swift', 'php', 'ruby', 'perl', 'bash', 'shell']) and not any(exclude in skill_lower for exclude in ['libraries', 'algorithms', 'frameworks', 'tools', 'unix', 'environment', 'platform']):
+                programming_languages.append(skill)
+            # Frameworks and libraries
+            elif any(fw in skill_lower for fw in ['tensorflow', 'pytorch', 'scikit', 'keras', 'django', 'flask', 'react', 'angular', 'vue', 'node.js', 'spring', 'express', 'fastapi', 'pandas', 'numpy', 'matplotlib', 'seaborn', 'plotly', 'bokeh', 'd3.js', 'bootstrap', 'jquery', 'libraries', 'frameworks']):
+                frameworks_libraries.append(skill)
+            # Databases
+            elif any(db in skill_lower for db in ['mysql', 'postgresql', 'postgres', 'mongodb', 'redis', 'elasticsearch', 'cassandra', 'dynamodb', 'sqlite', 'oracle', 'sql server']):
+                databases.append(skill)
+            # Other technical skills (ML, algorithms, etc.)
+            else:
+                other_technical.append(skill)
+        
+        # Categorize tools and technologies
+        cloud_platforms = []
+        other_tools = []
+        
+        for tool in keywords.tools_technologies:
+            tool_lower = tool.lower()
+            if any(cloud in tool_lower for cloud in ['aws', 'azure', 'gcp', 'google cloud', 'amazon web services', 'kubernetes', 'docker', 'jenkins', 'gitlab', 'github']):
+                cloud_platforms.append(tool)
+            else:
+                other_tools.append(tool)
+        
+        # Add any remaining uncategorized items to "others"
+        # This includes items from soft_skills, responsibilities, requirements that don't fit other categories
+        for skill in keywords.soft_skills:
+            others.append(skill)
+        
+        # Filter responsibilities and requirements - only add short, skill-like items
+        for resp in keywords.responsibilities:
+            # Only add if it's a short phrase that looks like a skill (not a full sentence)
+            if len(resp.split()) <= 5 and not resp.endswith('.') and not any(word in resp.lower() for word in ['experience', 'years', 'degree', 'responsibility', 'requirement']):
+                others.append(resp)
+        
+        for req in keywords.requirements:
+            # Only add if it's a short phrase that looks like a skill (not a full sentence)
+            if len(req.split()) <= 5 and not req.endswith('.') and not any(word in req.lower() for word in ['experience', 'years', 'degree', 'responsibility', 'requirement']):
+                others.append(req)
+        
+        # Process extracted skills - add them to appropriate categories or create new ones
+        extracted_technical = []
+        extracted_tools = []
+        extracted_methodologies = []
+        extracted_certifications = []
+        extracted_skills_others = []
+        
+        for skill in keywords.extracted_skills:
+            skill_lower = skill.lower()
+            
+            # Check if it's already in technical_skills or tools_technologies
+            if skill in keywords.technical_skills or skill in keywords.tools_technologies:
+                continue
+                
+            # Filter out long sentences and requirements
+            if len(skill.split()) > 8 or any(word in skill_lower for word in ['experience', 'years', 'degree', 'responsibility', 'requirement', 'master', 'bachelor']):
+                continue
+                
+            # Categorize extracted skills
+            if any(tech in skill_lower for tech in ['python', 'java', 'javascript', 'sql', 'r', 'scala', 'go', 'rust', 'c++', 'c#', 'php', 'ruby', 'perl', 'bash', 'shell', 'html', 'css', 'typescript']):
+                extracted_technical.append(skill)
+            elif any(tool in skill_lower for tool in ['git', 'docker', 'kubernetes', 'jenkins', 'jira', 'confluence', 'slack', 'aws', 'azure', 'gcp', 'tableau', 'powerbi', 'excel', 'tensorflow', 'pytorch', 'pandas', 'numpy', 'matplotlib', 'seaborn']):
+                extracted_tools.append(skill)
+            elif any(method in skill_lower for method in ['agile', 'scrum', 'kanban', 'ci/cd', 'devops', 'lean', 'six sigma', 'waterfall', 'regression', 'neural', 'pca', 'svm', 'clustering']):
+                extracted_methodologies.append(skill)
+            elif any(cert in skill_lower for cert in ['certified', 'certification', 'pmp', 'aws', 'azure', 'google', 'cisco', 'comptia']):
+                extracted_certifications.append(skill)
+            else:
+                # Add to other technical if it seems technical, otherwise to extracted_skills_others
+                if any(tech_indicator in skill_lower for tech_indicator in ['analysis', 'modeling', 'development', 'testing', 'deployment', 'automation', 'optimization', 'visualization', 'machine learning', 'data science', 'statistical']):
+                    extracted_technical.append(skill)
+                else:
+                    extracted_skills_others.append(skill)
+        
         insights = {
             "total_technical_skills": len(keywords.technical_skills),
             "total_soft_skills": len(keywords.soft_skills),
             "total_tools": len(keywords.tools_technologies),
+            "total_extracted_skills": len(keywords.extracted_skills),
             "most_frequent_keywords": sorted(
                 keywords.keywords_frequency.items(), 
                 key=lambda x: x[1], 
                 reverse=True
             )[:5],
             "skill_categories": {
-                "programming_languages": [skill for skill in keywords.technical_skills 
-                                        if any(lang in skill.lower() for lang in 
-                                              ['python', 'java', 'javascript', 'c++', 'c#', 'r', 'sql', 'go', 'rust'])],
-                "frameworks": [skill for skill in keywords.technical_skills 
-                             if any(fw in skill.lower() for fw in 
-                                   ['tensorflow', 'pytorch', 'scikit', 'django', 'flask', 'react', 'angular', 'vue'])],
-                "databases": [skill for skill in keywords.tools_technologies 
-                            if any(db in skill.lower() for db in 
-                                  ['mysql', 'postgresql', 'mongodb', 'redis', 'elasticsearch', 'sql', 'nosql'])]
+                "programming_languages": programming_languages,
+                "frameworks_libraries": frameworks_libraries,
+                "databases": databases,
+                "other_technical_skills": other_technical,
+                "cloud_platforms": cloud_platforms,
+                "other_tools": other_tools,
+                "extracted_technical_skills": extracted_technical,
+                "extracted_tools": extracted_tools,
+                "extracted_methodologies": extracted_methodologies,
+                "extracted_certifications": extracted_certifications,
+                "extracted_skills_others": extracted_skills_others,
+                "others": others
             }
         }
         
@@ -296,6 +509,12 @@ class JobDescriptionAnalyzerMVP:
         for skill in keywords['soft_skills'][:3]:
             print(f"   • {skill}")
         
+        # Display extracted skills
+        if keywords.get('extracted_skills'):
+            print(f"\n🔍 Extracted Skills ({len(keywords['extracted_skills'])}):")
+            for skill in keywords['extracted_skills'][:5]:
+                print(f"   • {skill}")
+        
         # Insights
         insights = analysis["insights"]
         print(f"\n📈 Most Frequent Keywords:")
@@ -345,7 +564,7 @@ def main():
     
     try:
         # Initialize analyzer
-        # Note: You need to set OPENAI_API_KEY environment variable or pass api_key parameter
+        # Note: You need to set ANTHROPIC_API_KEY environment variable or pass api_key parameter
         analyzer = JobDescriptionAnalyzerMVP()
         
         # Analyze job description
@@ -361,8 +580,8 @@ def main():
         
     except ValueError as e:
         print(f"❌ Configuration error: {e}")
-        print("💡 Set your OpenAI API key:")
-        print("   export OPENAI_API_KEY='your_api_key_here'")
+        print("💡 Set your Anthropic API key:")
+        print("   export ANTHROPIC_API_KEY='your_api_key_here'")
         print("   or pass api_key parameter to JobDescriptionAnalyzerMVP()")
         
     except Exception as e:

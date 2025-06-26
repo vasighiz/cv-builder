@@ -290,17 +290,19 @@ def parse_resume_with_debug(matcher: ResumeKeywordMatcher, cv_text: str) -> Dict
         }}
         """
         
-        response = matcher.client.chat.completions.create(
+        response = matcher.client.messages.create(
             model=matcher.model,
-            messages=[
-                {"role": "system", "content": "You are an expert resume parser specializing in tech industry resumes."},
-                {"role": "user", "content": prompt}
-            ],
+            max_tokens=4000,  # Increased token limit for longer CVs
             temperature=0.2,
-            max_tokens=4000  # Increased token limit for longer CVs
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
         )
         
-        content = response.choices[0].message.content
+        content = response.content[0].text
         print(f"📄 Raw LLM Response Length: {len(content)} characters")
         print("📄 Raw LLM Response Preview (first 500 chars):")
         print("-" * 50)
@@ -481,10 +483,12 @@ def main():
     print("🚀 Module 2 Test Runner: Resume Keyword Matcher with Personal CV")
     print("=" * 70)
     
-    # Check for API key
-    api_key = os.getenv("OPENAI_API_KEY")
+    # Get API key
+    api_key = os.getenv('ANTHROPIC_API_KEY')
     if not api_key:
-        print("❌ Error: OPENAI_API_KEY not found in environment variables")
+        print("❌ ANTHROPIC_API_KEY environment variable not set!")
+        print("💡 Set your Anthropic API key:")
+        print("   export ANTHROPIC_API_KEY='your_api_key_here'")
         return
     
     # Check for CV file (use cv.docx instead of ai_cv.docx)
@@ -570,12 +574,12 @@ def main():
         
         # Fallback to old structure if no jobs found
         if not job_files:
-    for search_dir in [output_dir, output_dir / "module1"]:
-        if search_dir.exists():
-            for file in search_dir.glob("analysis_job*.json"):
-                job_name = file.stem.split("_")[1]  # Extract job1, job2, etc.
-                if job_name not in [f[1] for f in job_files]:
-                    job_files.append((file, job_name))
+            for search_dir in [output_dir, output_dir / "module1"]:
+                if search_dir.exists():
+                    for file in search_dir.glob("analysis_job*.json"):
+                        job_name = file.stem.split("_")[1]  # Extract job1, job2, etc.
+                        if job_name not in [f[1] for f in job_files]:
+                            job_files.append((file, job_name))
     
     if not job_files:
         print("❌ No job analysis files found. Please run Module 1 tests first.")

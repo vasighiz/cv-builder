@@ -27,13 +27,13 @@ class StructuredTestRunner:
     def __init__(self):
         self.samples_dir = os.path.join('src', 'data', 'samples')
         self.output_dir = os.path.join('tests', 'output')
-        self.api_key = os.getenv('OPENAI_API_KEY')
+        self.api_key = os.getenv('ANTHROPIC_API_KEY')
         
         # Create output directory if it doesn't exist
         os.makedirs(self.output_dir, exist_ok=True)
         
         if not self.api_key:
-            raise ValueError("OPENAI_API_KEY not found in environment variables")
+            raise ValueError("ANTHROPIC_API_KEY not found in environment variables")
         
         self.analyzer = JobDescriptionAnalyzerMVP(self.api_key)
     
@@ -177,12 +177,55 @@ class StructuredTestRunner:
             if skill_categories:
                 f.write("SKILL CATEGORIES:\n")
                 f.write("-" * 20 + "\n")
-                for category, skills in skill_categories.items():
-                    if skills:
-                        f.write(f"{category.replace('_', ' ').title()}:\n")
-                        for skill in skills:
-                            f.write(f"  • {skill}\n")
-                        f.write("\n")
+                
+                # Programming Languages
+                if skill_categories.get('programming_languages'):
+                    f.write("Programming Languages:\n")
+                    for skill in skill_categories['programming_languages']:
+                        f.write(f"  • {skill}\n")
+                    f.write("\n")
+                
+                # Frameworks and Libraries
+                if skill_categories.get('frameworks_libraries'):
+                    f.write("Frameworks & Libraries:\n")
+                    for skill in skill_categories['frameworks_libraries']:
+                        f.write(f"  • {skill}\n")
+                    f.write("\n")
+                
+                # Databases
+                if skill_categories.get('databases'):
+                    f.write("Databases:\n")
+                    for skill in skill_categories['databases']:
+                        f.write(f"  • {skill}\n")
+                    f.write("\n")
+                
+                # Other Technical Skills
+                if skill_categories.get('other_technical_skills'):
+                    f.write("Other Technical Skills:\n")
+                    for skill in skill_categories['other_technical_skills']:
+                        f.write(f"  • {skill}\n")
+                    f.write("\n")
+                
+                # Cloud Platforms
+                if skill_categories.get('cloud_platforms'):
+                    f.write("Cloud Platforms:\n")
+                    for skill in skill_categories['cloud_platforms']:
+                        f.write(f"  • {skill}\n")
+                    f.write("\n")
+                
+                # Other Tools
+                if skill_categories.get('other_tools'):
+                    f.write("Other Tools:\n")
+                    for skill in skill_categories['other_tools']:
+                        f.write(f"  • {skill}\n")
+                    f.write("\n")
+                
+                # Others
+                if skill_categories.get('others'):
+                    f.write("Others:\n")
+                    for skill in skill_categories['others']:
+                        f.write(f"  • {skill}\n")
+                    f.write("\n")
             
             # Recommendations
             recommendations = analysis.get("recommendations", [])

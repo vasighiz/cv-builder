@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 from dotenv import load_dotenv
-from openai import OpenAI
+from anthropic import Anthropic
 
 # Load environment variables
 load_dotenv()
@@ -36,7 +36,8 @@ class FinalResumeGenerator:
     
     def __init__(self, api_key: str):
         self.api_key = api_key
-        self.client = OpenAI(api_key=api_key)
+        self.client = Anthropic(api_key=api_key)
+        self.model = "claude-3-haiku-20240307"
         
     def load_module_data(self, job_name: str, output_dir: Path) -> Dict[str, Any]:
         """
@@ -180,17 +181,13 @@ class FinalResumeGenerator:
         """
         
         try:
-            response = self.client.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {"role": "system", "content": "You are an expert resume writer specializing in creating compelling professional summaries that highlight ALL relevant domain expertise and skills that match the specific job requirements."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.3,
-                max_tokens=200
+            response = self.client.completion(
+                model=self.model,
+                prompt=prompt,
+                max_tokens_to_sample=200
             )
             
-            summary_text = response.choices[0].message.content.strip()
+            summary_text = response.completion.strip()
             
             # Clean up any markdown or extra formatting
             if summary_text.startswith('"') and summary_text.endswith('"'):
@@ -313,17 +310,13 @@ class FinalResumeGenerator:
         """
         
         try:
-            response = self.client.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {"role": "system", "content": "You are an expert resume writer creating professional resume sections."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.3,
-                max_tokens=1000
+            response = self.client.completion(
+                model=self.model,
+                prompt=prompt,
+                max_tokens_to_sample=1000
             )
             
-            content = response.choices[0].message.content.strip()
+            content = response.completion.strip()
             
             # Clean up the response
             if content.startswith("```json"):
@@ -602,21 +595,25 @@ class FinalResumeGenerator:
         if projects_data:
             experience_content.append(f"\nProject-Based Experience")
             experience_content.append("-" * 25)
-            
+
             for project in projects_data[:5]:  # Limit to top 5 projects
                 name = project.get('name', '')
                 description = project.get('description', '')
                 outcomes = project.get('outcomes', [])
                 technologies = project.get('technologies', [])
-                
+
                 if name and description:
                     # Create project-based experience bullet
                     tech_list = ', '.join(technologies[:3])  # Limit to 3 technologies
                     outcome_text = ''
                     if outcomes:
                         outcome_text = f", resulting in {', '.join(outcomes[:2])}"  # Limit to 2 outcomes
-                    
-                    project_bullet = f"• {description} using {tech_list}{outcome_text}"
+
+                    # Ensure proper sentence structure
+                    project_bullet = f"• {description} using {tech_list}{outcome_text}."
+                    project_bullet = project_bullet.replace('using ', '').replace('using', '')  # Remove redundant 'using'
+                    project_bullet = project_bullet[0].upper() + project_bullet[1:]  # Capitalize first letter
+
                     experience_content.append(project_bullet)
         
         return ResumeSection(

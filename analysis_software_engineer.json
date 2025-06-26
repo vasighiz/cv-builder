@@ -1,0 +1,114 @@
+{
+  "keywords": {
+    "technical_skills": [
+      "React",
+      "Node.js",
+      "Python",
+      "JavaScript",
+      "SQL",
+      "Angular",
+      "Vue.js"
+    ],
+    "soft_skills": [
+      "communication",
+      "problem-solving",
+      "leadership"
+    ],
+    "tools_technologies": [
+      "AWS",
+      "GCP",
+      "Azure",
+      "Docker",
+      "Kubernetes",
+      "CI/CD pipelines"
+    ],
+    "responsibilities": [
+      "Design and develop full-stack web applications",
+      "Write clean, maintainable code",
+      "Conduct code reviews",
+      "Optimize application performance",
+      "Ensure scalability",
+      "Collaborate with product managers and designers",
+      "Mentor junior developers",
+      "Contribute to technical decisions"
+    ],
+    "requirements": [
+      "5+ years experience in software development",
+      "Proficiency in JavaScript, Python, and SQL",
+      "Experience with modern web frameworks",
+      "Knowledge of cloud platforms",
+      "Strong problem-solving and communication skills"
+    ],
+    "keywords_frequency": {
+      "React": 1,
+      "Node.js": 1,
+      "Python": 2,
+      "JavaScript": 1,
+      "SQL": 1,
+      "Angular": 1,
+      "Vue.js": 1,
+      "AWS": 1,
+      "GCP": 1,
+      "Azure": 1,
+      "Docker": 1,
+      "Kubernetes": 1,
+      "communication": 2,
+      "problem-solving": 2,
+      "leadership": 1,
+      "full-stack": 1,
+      "web applications": 2,
+      "scalability": 2
+    }
+  },
+  "role_analysis": {
+    "role_category": "Software Engineer",
+    "seniority_level": "Senior",
+    "industry_focus": "Web Development",
+    "experience_years": "5+"
+  },
+  "insights": {
+    "total_technical_skills": 7,
+    "total_soft_skills": 3,
+    "total_tools": 6,
+    "most_frequent_keywords": [
+      [
+        "Python",
+        2
+      ],
+      [
+        "communication",
+        2
+      ],
+      [
+        "problem-solving",
+        2
+      ],
+      [
+        "web applications",
+        2
+      ],
+      [
+        "scalability",
+        2
+      ]
+    ],
+    "skill_categories": {
+      "programming_languages": [
+        "React",
+        "Python",
+        "JavaScript",
+        "SQL",
+        "Angular"
+      ],
+      "frameworks": [
+        "React",
+        "Angular",
+        "Vue.js"
+      ],
+      "databases": []
+    }
+  },
+  "recommendations": [
+    "👑 Emphasize leadership and project management experience"
+  ]
+}

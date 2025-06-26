@@ -5,3 +5,62 @@ Milestone 4: Download-ready PDF/Docx export
 Milestone 5: Optional AI chat for feedback and Q&A
 
 ATS checker
+
+
+1-Job description Analyzer
+	extract keywords (Module 1 Analysis Primary Strategy: API-Based (OpenAI GPT-4o))
+2-Resume optimization engine: 
+	Compares personal resume/CV against the job requirements (from Module 1) to provide: (OpenAI GPT-4o)
+	Gap Analysis: What skills you have vs. what the job needs
+	Coverage Percentage: How well your resume matches the job
+	Missing Keywords: Skills you need to acquire or highlight
+	Recommendations: How to improve your resume for this job
+	Priority Keywords: Most important missing skills to focus on
+	Key Features:
+		Resume Parsing: Extracts skills, experience, projects from your CV
+		Keyword Matching: Compares your skills with job requirements
+		Fuzzy Matching: Handles variations in skill names
+		Gap Analysis: Identifies what's missing
+		Enhancement Suggestions: How to improve your resume
+	Module 2 Workflow:
+		Input: Job analysis from Module 1 + Your personal CV
+		Process: Parse CV → Extract skills → Match against job keywords
+		Output: Gap analysis with recommendations for resume improvement
+	What's NOT Using API:
+		Keyword Matching: Uses local fuzzy matching algorithms
+		Gap Analysis: Calculated locally using Python logic
+		Recommendations: Generated using local rules and heuristics
+	Summary:
+		API Usage: Only for resume parsing (converting raw text to structured data)
+		Local Processing: Everything else (matching, analysis, recommendations) is done locally
+		Model: OpenAI GPT-4o
+		Cost: Minimal - only one API call per resume analysis
+		
+3-Resume Sections Generator
+	It is responsible for auto-generating the Skills, Experience, and Projects sections of a resume using job-aligned keywords. (OpenAI GPT-4o)
+	Skills Section: based on job requirements.
+	Experience Bullets: It creates bullet points for work experience, focusing on action verbs, descriptions, and quantified results.
+	Project Descriptions: It generates detailed descriptions of projects, including technologies used and outcomes achieved.
+	The module is designed to integrate with other modules to form a comprehensive resume generation system. 
+	Module 3 uses the output of both Module 1 and Module 2. Here's how:
+		Module 1 (Job Analysis): uses the job analysis data to align the generated resume sections with the job requirements. 
+		This includes using the extracted keywords, responsibilities, and requirements to generate relevant skills, experience, and project descriptions.
+		Module 2 (Keyword Matching): uses the keyword matching results to personalize the resume sections based on the candidate's existing skills and experiences. 
+		This helps in tailoring the resume to highlight the most relevant skills and experiences for the job.
+		
+5-Final Resume Generator
+	generating a professional, standard-format resume by combining insights from all previous modules.
+	Functionality:
+		Data Aggregation: It loads data from all previous modules (Module 1: Job Analysis, Module 2: Keyword Matching, Module 3: Resume Sections) for a specific job.
+		Section Generation:
+			Header: Professional header section with personal details.
+			Summary: Professional summary based on job analysis and gap analysis.
+			Skills: Skills section with job-relevant skills, including project technologies.
+			Experience: Experience section with optimized bullets, including project-based experience.
+			Education: Education section with academic qualifications.
+			Certifications: Certifications section based on CV and job analysis.
+			Resume Formatting: It formats the resume sections and sorts them by order to create a cohesive document.
+		Output: The final resume is saved in multiple formats, including text and JSON.
+		API Usage:(OpenAI GPT-4o)
+			OpenAI API:to process and generate text for various sections of the resume. 
+			The API is used to enhance the content and ensure it aligns with professional standards.

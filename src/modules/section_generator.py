@@ -6,7 +6,7 @@ Purpose: Auto-generate Skills, Experience, and Projects sections using job-align
 import json
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
-from openai import OpenAI
+from anthropic import Anthropic
 
 
 @dataclass
@@ -56,13 +56,14 @@ class ResumeSectionGenerator:
     
     def __init__(self, api_key: str):
         """
-        Initialize the generator with OpenAI API key
+        Initialize the generator with Anthropic API key
         
         Args:
-            api_key (str): OpenAI API key
+            api_key (str): Anthropic API key
         """
-        self.client = OpenAI(api_key=api_key)
-        self.model = "gpt-4"
+        self.api_key = api_key
+        self.client = Anthropic(api_key=api_key)
+        self.model = "claude-3-haiku-20240307"
         
         # Action verbs for strong bullet points
         self.action_verbs = [
@@ -117,13 +118,9 @@ class ResumeSectionGenerator:
         """
         
         try:
-            response = self.client.chat.completions.create(
+            response = self.client.completion(
+                prompt=prompt,
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are an expert resume writer specializing in tech industry skills optimization."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.3,
                 max_tokens=1500
             )
             
@@ -219,13 +216,9 @@ class ResumeSectionGenerator:
         """
         
         try:
-            response = self.client.chat.completions.create(
+            response = self.client.completion(
+                prompt=prompt,
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are an expert resume writer creating impactful work experience bullet points."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.4,
                 max_tokens=1000
             )
             
@@ -314,13 +307,9 @@ class ResumeSectionGenerator:
         """
         
         try:
-            response = self.client.chat.completions.create(
+            response = self.client.completion(
+                prompt=prompt,
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are an expert resume writer creating compelling project descriptions."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.4,
                 max_tokens=800
             )
             
@@ -525,7 +514,7 @@ def main():
     }
     
     # Initialize generator
-    api_key = "your_openai_api_key_here"  # Replace with actual API key
+    api_key = "your_anthropic_api_key_here"  # Replace with actual API key
     generator = ResumeSectionGenerator(api_key)
     
     # Generate complete sections

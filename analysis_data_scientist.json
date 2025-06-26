@@ -1,0 +1,91 @@
+{
+  "keywords": {
+    "technical_skills": [
+      "Python",
+      "SQL",
+      "scikit-learn",
+      "TensorFlow",
+      "Pandas",
+      "NumPy"
+    ],
+    "soft_skills": [
+      "communication",
+      "problem-solving"
+    ],
+    "tools_technologies": [
+      "AWS",
+      "Azure",
+      "Tableau",
+      "Power BI"
+    ],
+    "responsibilities": [
+      "Develop and implement machine learning models",
+      "Analyze large datasets",
+      "Build predictive models for customer segmentation and behavior analysis",
+      "Collaborate with cross-functional teams to deploy models",
+      "Communicate complex findings to non-technical stakeholders"
+    ],
+    "requirements": [
+      "3+ years experience in data science or machine learning",
+      "Strong programming skills in Python and SQL",
+      "Experience with statistical analysis and machine learning algorithms",
+      "Bachelor's degree in Computer Science, Statistics, or related field"
+    ],
+    "keywords_frequency": {
+      "Python": 2,
+      "SQL": 2,
+      "machine learning": 3,
+      "TensorFlow": 2,
+      "data science": 1,
+      "communication": 2,
+      "problem-solving": 1
+    }
+  },
+  "role_analysis": {
+    "role_category": "Data Scientist",
+    "seniority_level": "Mid-level",
+    "industry_focus": "AI/ML",
+    "experience_years": "3+"
+  },
+  "insights": {
+    "total_technical_skills": 6,
+    "total_soft_skills": 2,
+    "total_tools": 4,
+    "most_frequent_keywords": [
+      [
+        "machine learning",
+        3
+      ],
+      [
+        "Python",
+        2
+      ],
+      [
+        "SQL",
+        2
+      ],
+      [
+        "TensorFlow",
+        2
+      ],
+      [
+        "communication",
+        2
+      ]
+    ],
+    "skill_categories": {
+      "programming_languages": [
+        "Python",
+        "SQL",
+        "scikit-learn",
+        "TensorFlow"
+      ],
+      "frameworks": [
+        "scikit-learn",
+        "TensorFlow"
+      ],
+      "databases": []
+    }
+  },
+  "recommendations": []
+}

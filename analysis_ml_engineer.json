@@ -1,0 +1,102 @@
+{
+  "keywords": {
+    "technical_skills": [
+      "Python",
+      "TensorFlow",
+      "Apache Spark",
+      "Kafka",
+      "MLOps",
+      "distributed computing",
+      "big data technologies"
+    ],
+    "soft_skills": [
+      "problem-solving",
+      "collaboration"
+    ],
+    "tools_technologies": [
+      "AWS",
+      "GCP",
+      "Docker",
+      "Kubernetes",
+      "microservices architecture",
+      "TensorFlow Serving",
+      "MLflow"
+    ],
+    "responsibilities": [
+      "Design and implement machine learning pipelines",
+      "Develop and optimize ML models for production deployment",
+      "Build data processing pipelines",
+      "Implement MLOps practices for model monitoring and deployment",
+      "Work with data scientists to operationalize research models"
+    ],
+    "requirements": [
+      "4+ years experience in machine learning or software engineering",
+      "Strong Python programming skills and experience with ML libraries",
+      "Experience with cloud platforms and containerization",
+      "Knowledge of distributed computing and big data technologies",
+      "Excellent problem-solving and collaboration skills"
+    ],
+    "keywords_frequency": {
+      "machine learning": 3,
+      "Python": 2,
+      "TensorFlow": 2,
+      "MLOps": 2,
+      "AWS": 1,
+      "GCP": 1,
+      "Docker": 1,
+      "Kubernetes": 1,
+      "Apache Spark": 1,
+      "Kafka": 1,
+      "collaboration": 1,
+      "problem-solving": 1
+    }
+  },
+  "role_analysis": {
+    "role_category": "ML Engineer",
+    "seniority_level": "Senior",
+    "industry_focus": "AI/ML",
+    "experience_years": "4+"
+  },
+  "insights": {
+    "total_technical_skills": 7,
+    "total_soft_skills": 2,
+    "total_tools": 7,
+    "most_frequent_keywords": [
+      [
+        "machine learning",
+        3
+      ],
+      [
+        "Python",
+        2
+      ],
+      [
+        "TensorFlow",
+        2
+      ],
+      [
+        "MLOps",
+        2
+      ],
+      [
+        "AWS",
+        1
+      ]
+    ],
+    "skill_categories": {
+      "programming_languages": [
+        "Python",
+        "TensorFlow",
+        "Apache Spark",
+        "distributed computing"
+      ],
+      "frameworks": [
+        "TensorFlow"
+      ],
+      "databases": []
+    }
+  },
+  "recommendations": [
+    "👑 Emphasize leadership and project management experience"
+  ]
+}
