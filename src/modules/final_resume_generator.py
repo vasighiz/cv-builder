@@ -607,11 +607,12 @@ class FinalResumeGenerator:
                     tech_list = ', '.join(technologies[:3])  # Limit to 3 technologies
                     outcome_text = ''
                     if outcomes:
-                        outcome_text = f", resulting in {', '.join(outcomes[:2])}"  # Limit to 2 outcomes
+                        outcome_text = f", resulting in {', '.join(outcomes).lower()}"  # Include all outcomes in lowercase
 
                     # Ensure proper sentence structure
-                    project_bullet = f"• {description} using {tech_list}{outcome_text}."
+                    project_bullet = f"• {description}{outcome_text}."
                     project_bullet = project_bullet.replace('using ', '').replace('using', '')  # Remove redundant 'using'
+                    project_bullet = project_bullet.replace('.,', ',')  # Remove '.,' occurrence
                     project_bullet = project_bullet[0].upper() + project_bullet[1:]  # Capitalize first letter
 
                     experience_content.append(project_bullet)
