@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Resume Builder</h1>
+            <div class="box">
+                <form id="uploadForm">
+                    <div class="field">
+                        <label class="label">Upload Resume (DOCX)</label>
+                        <div class="control">
+                            <input class="input" type="file" id="resumeFile" accept=".docx">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Job Description</label>
+                        <div class="control">
+                            <textarea class="textarea" id="jobDescription" placeholder="Paste job description here..."></textarea>
+                        </div>
+                    </div>
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <button class="button is-link" type="button" onclick="uploadResume()">Upload</button>
+                        </div>
+                        <div class="control">
+                            <button class="button is-link is-light" type="button" onclick="analyzeJobDescription()">Analyze</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function uploadResume() {
+            const fileInput = document.getElementById('resumeFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a file to upload.');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/upload_resume', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => alert(data.success || data.error))
+            .catch(error => console.error('Error:', error));
+        }
+
+        function analyzeJobDescription() {
+            const jobDescription = document.getElementById('jobDescription').value;
+            if (!jobDescription) {
+                alert('Please enter a job description.');
+                return;
+            }
+
+            fetch('/analyze_job_description', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ job_description: jobDescription })
+            })
+            .then(response => response.json())
+            .then(data => alert(data.success || data.error))
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html> 
