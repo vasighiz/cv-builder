@@ -1,18 +1,34 @@
 """
 Local LLM Manager Module
-Purpose: Manage local LLM models (Mistral 7B, etc.) with easy switching between local and API models
+Purpose: Manage local LLM models (Mistral 7B GGUF, etc.) with easy switching between local and API models
 """
 
 import os
 import json
 import logging
+import time
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Union
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from dotenv import load_dotenv
+
+# Import ctransformers for GGUF support
+try:
+    from ctransformers import AutoModelForCausalLM, AutoTokenizer
+    CTTRANSFORMERS_AVAILABLE = True
+except ImportError:
+    CTTRANSFORMERS_AVAILABLE = False
+    print("⚠️  ctransformers not available. Install with: pip install ctransformers")
+
+# Import OpenAI for API fallback
+try:
+    from openai import OpenAI
+    OPENAI_AVAILABLE = True
+except ImportError:
+    OPENAI_AVAILABLE = False
+    print("⚠️  OpenAI not available. Install with: pip install openai")
 
 # Load environment variables
 load_dotenv()
@@ -26,337 +42,306 @@ class LLMConfig:
     """Configuration for LLM models"""
     model_name: str
     model_type: str  # 'local' or 'api'
+    model_path: Optional[str] = None
     max_length: int = 2048
     temperature: float = 0.7
     top_p: float = 0.9
-    top_k: int = 50
+    top_k: int = 40
     repetition_penalty: float = 1.1
-    device: str = "auto"  # 'auto', 'cpu', 'cuda', 'mps'
+    context_length: int = 4096
+    gpu_layers: int = 0  # 0 for CPU, >0 for GPU layers
+    threads: int = 4
 
-@dataclass
-class LLMResponse:
-    """Standardized response format for LLM outputs"""
-    content: str
-    model_name: str
-    model_type: str
-    tokens_used: Optional[int] = None
-    response_time: Optional[float] = None
-    error: Optional[str] = None
+# Predefined configurations
+MISTRAL_7B_GGUF_CONFIG = LLMConfig(
+    model_name="mistral-7b-instruct-v0.1.Q4_K_M.gguf",
+    model_type="local",
+    model_path="./models/mistralai/mistral-7b-instruct-v0.1.Q4_K_M.gguf",
+    max_length=2048,
+    temperature=0.7,
+    top_p=0.9,
+    top_k=40,
+    repetition_penalty=1.1,
+    context_length=4096,
+    gpu_layers=35,  # Use GPU for most layers on GTX 1660 Ti
+    threads=4
+)
+
+GPT4_CONFIG = LLMConfig(
+    model_name="gpt-4o",
+    model_type="api",
+    max_length=2048,
+    temperature=0.7
+)
 
 class BaseLLMProvider(ABC):
     """Abstract base class for LLM providers"""
     
     @abstractmethod
-    def generate(self, prompt: str, config: LLMConfig) -> LLMResponse:
-        """Generate response from LLM"""
+    def generate(self, prompt: str, **kwargs) -> str:
+        """Generate text from prompt"""
         pass
     
     @abstractmethod
     def is_available(self) -> bool:
-        """Check if the provider is available"""
+        """Check if provider is available"""
         pass
 
-class LocalLLMProvider(BaseLLMProvider):
-    """Local LLM provider using Hugging Face models"""
+class GGUFProvider(BaseLLMProvider):
+    """GGUF model provider using ctransformers"""
     
-    def __init__(self, model_path: Optional[str] = None):
-        self.model_path = model_path
+    def __init__(self, config: LLMConfig):
+        self.config = config
         self.model = None
         self.tokenizer = None
-        self.pipeline = None
-        self.device = self._get_device()
-        
-    def _get_device(self) -> str:
-        """Determine the best available device"""
-        if torch.cuda.is_available():
-            return "cuda"
-        elif torch.backends.mps.is_available():
-            return "mps"
-        else:
-            return "cpu"
+        self._load_model()
     
-    def load_model(self, model_name: str, config: LLMConfig) -> bool:
-        """Load the specified model"""
+    def _load_model(self):
+        """Load GGUF model"""
+        if not CTTRANSFORMERS_AVAILABLE:
+            raise ImportError("ctransformers not available")
+        
+        model_path = self.config.model_path
+        if not model_path or not Path(model_path).exists():
+            raise FileNotFoundError(f"Model not found at: {model_path}")
+        
         try:
-            logger.info(f"Loading local model: {model_name}")
+            logger.info(f"🔄 Loading GGUF model: {model_path}")
             
-            # Set device
-            device = config.device if config.device != "auto" else self.device
+            # Load model with GPU acceleration if available
+            model_kwargs = {
+                "model_type": "mistral",  # or auto-detect
+                "gpu_layers": self.config.gpu_layers,
+                "threads": self.config.threads,
+                "context_length": self.config.context_length,
+                "max_new_tokens": self.config.max_length,
+                "temperature": self.config.temperature,
+                "top_p": self.config.top_p,
+                "top_k": self.config.top_k,
+                "repetition_penalty": self.config.repetition_penalty
+            }
             
-            # Load tokenizer
-            self.tokenizer = AutoTokenizer.from_pretrained(
-                model_name,
-                trust_remote_code=True,
-                cache_dir="./models"
-            )
-            
-            # Add padding token if not present
-            if self.tokenizer.pad_token is None:
-                self.tokenizer.pad_token = self.tokenizer.eos_token
-            
-            # Load model
             self.model = AutoModelForCausalLM.from_pretrained(
-                model_name,
-                torch_dtype=torch.float16 if device == "cuda" else torch.float32,
-                device_map=device if device != "cpu" else None,
-                trust_remote_code=True,
-                cache_dir="./models",
-                low_cpu_mem_usage=True
+                model_path,
+                **model_kwargs
             )
             
-            # Create pipeline
-            self.pipeline = pipeline(
-                "text-generation",
-                model=self.model,
-                tokenizer=self.tokenizer,
-                device=device if device != "cpu" else -1,
-                torch_dtype=torch.float16 if device == "cuda" else torch.float32
-            )
-            
-            logger.info(f"Model {model_name} loaded successfully on {device}")
-            return True
+            logger.info(f"✅ GGUF model loaded successfully")
             
         except Exception as e:
-            logger.error(f"Error loading model {model_name}: {e}")
-            return False
+            logger.error(f"❌ Error loading GGUF model: {e}")
+            raise
     
-    def generate(self, prompt: str, config: LLMConfig) -> LLMResponse:
-        """Generate response using local model"""
+    def generate(self, prompt: str, **kwargs) -> str:
+        """Generate text using GGUF model"""
+        if not self.model:
+            raise RuntimeError("Model not loaded")
+        
         try:
-            if self.pipeline is None:
-                if not self.load_model(config.model_name, config):
-                    return LLMResponse(
-                        content="",
-                        model_name=config.model_name,
-                        model_type="local",
-                        error="Failed to load model"
-                    )
+            # Prepare prompt with Mistral format
+            formatted_prompt = f"<s>[INST] {prompt} [/INST]"
             
             # Generate response
-            response = self.pipeline(
-                prompt,
-                max_length=config.max_length,
-                temperature=config.temperature,
-                top_p=config.top_p,
-                top_k=config.top_k,
-                repetition_penalty=config.repetition_penalty,
-                do_sample=True,
-                pad_token_id=self.tokenizer.eos_token_id,
-                return_full_text=False
+            response = self.model(
+                formatted_prompt,
+                max_new_tokens=kwargs.get('max_tokens', self.config.max_length),
+                temperature=kwargs.get('temperature', self.config.temperature),
+                top_p=kwargs.get('top_p', self.config.top_p),
+                top_k=kwargs.get('top_k', self.config.top_k),
+                repetition_penalty=kwargs.get('repetition_penalty', self.config.repetition_penalty),
+                stop=["</s>", "[INST]"]  # Stop at end tokens
             )
             
-            # Extract generated text
-            generated_text = response[0]['generated_text'] if response else ""
+            # Clean up response
+            if isinstance(response, list):
+                response = response[0]
             
-            return LLMResponse(
-                content=generated_text.strip(),
-                model_name=config.model_name,
-                model_type="local",
-                tokens_used=len(self.tokenizer.encode(generated_text))
-            )
+            # Remove the prompt from response
+            if formatted_prompt in response:
+                response = response.replace(formatted_prompt, "").strip()
+            
+            return response
             
         except Exception as e:
-            logger.error(f"Error generating response: {e}")
-            return LLMResponse(
-                content="",
-                model_name=config.model_name,
-                model_type="local",
-                error=str(e)
-            )
+            logger.error(f"❌ Error generating text: {e}")
+            return f"Error: {str(e)}"
     
     def is_available(self) -> bool:
-        """Check if local model is available"""
-        return self.pipeline is not None
+        """Check if GGUF provider is available"""
+        return CTTRANSFORMERS_AVAILABLE and self.model is not None
 
-class APILLMProvider(BaseLLMProvider):
-    """API LLM provider (OpenAI, etc.)"""
+class OpenAIProvider(BaseLLMProvider):
+    """OpenAI API provider"""
     
-    def __init__(self, api_key: str):
-        self.api_key = api_key
-        try:
-            from openai import OpenAI
-            self.client = OpenAI(api_key=api_key)
-            self._available = True
-        except ImportError:
-            logger.error("OpenAI library not installed")
-            self._available = False
+    def __init__(self, config: LLMConfig):
+        self.config = config
+        self.client = None
+        self._init_client()
     
-    def generate(self, prompt: str, config: LLMConfig) -> LLMResponse:
-        """Generate response using API"""
+    def _init_client(self):
+        """Initialize OpenAI client"""
+        if not OPENAI_AVAILABLE:
+            raise ImportError("OpenAI not available")
+        
+        api_key = os.getenv('OPENAI_API_KEY')
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY not found in environment")
+        
+        self.client = OpenAI(api_key=api_key)
+    
+    def generate(self, prompt: str, **kwargs) -> str:
+        """Generate text using OpenAI API"""
+        if not self.client:
+            raise RuntimeError("OpenAI client not initialized")
+        
         try:
-            if not self._available:
-                return LLMResponse(
-                    content="",
-                    model_name=config.model_name,
-                    model_type="api",
-                    error="API provider not available"
-                )
-            
             response = self.client.chat.completions.create(
-                model=config.model_name,
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=config.max_length,
-                temperature=config.temperature,
-                top_p=config.top_p,
-                frequency_penalty=config.repetition_penalty - 1.0
+                model=self.config.model_name,
+                messages=[
+                    {"role": "system", "content": "You are a helpful AI assistant."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=kwargs.get('max_tokens', self.config.max_length),
+                temperature=kwargs.get('temperature', self.config.temperature),
+                top_p=kwargs.get('top_p', self.config.top_p)
             )
             
-            return LLMResponse(
-                content=response.choices[0].message.content,
-                model_name=config.model_name,
-                model_type="api",
-                tokens_used=response.usage.total_tokens
-            )
+            return response.choices[0].message.content.strip()
             
         except Exception as e:
-            logger.error(f"Error generating API response: {e}")
-            return LLMResponse(
-                content="",
-                model_name=config.model_name,
-                model_type="api",
-                error=str(e)
-            )
+            logger.error(f"❌ Error generating text with OpenAI: {e}")
+            return f"Error: {str(e)}"
     
     def is_available(self) -> bool:
-        """Check if API provider is available"""
-        return self._available
+        """Check if OpenAI provider is available"""
+        return OPENAI_AVAILABLE and self.client is not None
 
 class LLMManager:
-    """Main LLM manager for switching between local and API models"""
+    """Manager for multiple LLM providers"""
     
-    def __init__(self, default_config: Optional[LLMConfig] = None):
-        self.default_config = default_config or LLMConfig(
-            model_name="mistralai/Mistral-7B-Instruct-v0.2",
-            model_type="local"
-        )
-        self.local_provider = LocalLLMProvider()
-        self.api_provider = None
-        self.current_provider = None
-        
-        # Initialize API provider if key is available
-        api_key = os.getenv("OPENAI_API_KEY")
-        if api_key:
-            self.api_provider = APILLMProvider(api_key)
+    def __init__(self):
+        self.providers: Dict[str, BaseLLMProvider] = {}
+        self.current_provider = "local"
+        self.usage_stats = {
+            "local": {"calls": 0, "total_tokens": 0, "errors": 0},
+            "api": {"calls": 0, "total_tokens": 0, "errors": 0}
+        }
     
-    def set_provider(self, provider_type: str) -> bool:
-        """Set the current LLM provider"""
-        if provider_type == "local":
-            self.current_provider = self.local_provider
-            return True
-        elif provider_type == "api" and self.api_provider:
-            self.current_provider = self.api_provider
-            return True
+    def add_provider(self, name: str, provider: BaseLLMProvider):
+        """Add a provider"""
+        self.providers[name] = provider
+        logger.info(f"✅ Added provider: {name}")
+    
+    def set_provider(self, name: str):
+        """Set current provider"""
+        if name in self.providers:
+            self.current_provider = name
+            logger.info(f"🔄 Switched to provider: {name}")
         else:
-            logger.error(f"Provider type '{provider_type}' not available")
-            return False
+            raise ValueError(f"Provider not found: {name}")
     
-    def generate(self, prompt: str, config: Optional[LLMConfig] = None) -> LLMResponse:
-        """Generate response using current provider"""
-        if config is None:
-            config = self.default_config
-        
-        if self.current_provider is None:
-            # Auto-select provider based on config
-            if config.model_type == "local":
-                self.current_provider = self.local_provider
-            elif config.model_type == "api" and self.api_provider:
-                self.current_provider = self.api_provider
-            else:
-                return LLMResponse(
-                    content="",
-                    model_name=config.model_name,
-                    model_type=config.model_type,
-                    error="No suitable provider available"
-                )
-        
-        return self.current_provider.generate(prompt, config)
+    def get_provider(self, name: Optional[str] = None) -> BaseLLMProvider:
+        """Get provider by name or current provider"""
+        provider_name = name or self.current_provider
+        if provider_name not in self.providers:
+            raise ValueError(f"Provider not found: {provider_name}")
+        return self.providers[provider_name]
+    
+    def generate(self, prompt: str, provider: Optional[str] = None, **kwargs) -> str:
+        """Generate text using specified or current provider"""
+        try:
+            provider_name = provider or self.current_provider
+            llm_provider = self.get_provider(provider_name)
+            
+            if not llm_provider.is_available():
+                raise RuntimeError(f"Provider {provider_name} is not available")
+            
+            # Track usage
+            self.usage_stats[provider_name]["calls"] += 1
+            
+            # Generate response
+            start_time = time.time()
+            response = llm_provider.generate(prompt, **kwargs)
+            end_time = time.time()
+            
+            # Update stats
+            self.usage_stats[provider_name]["total_tokens"] += len(response.split())
+            
+            logger.info(f"✅ Generated response in {end_time - start_time:.2f}s using {provider_name}")
+            return response
+            
+        except Exception as e:
+            provider_name = provider or self.current_provider
+            self.usage_stats[provider_name]["errors"] += 1
+            logger.error(f"❌ Error generating text: {e}")
+            return f"Error: {str(e)}"
     
     def get_available_models(self) -> Dict[str, List[str]]:
-        """Get list of available models"""
-        models = {
-            "local": [
-                "mistralai/Mistral-7B-Instruct-v0.2",
-                "microsoft/DialoGPT-medium",
-                "gpt2",
-                "EleutherAI/gpt-neo-125M"
-            ],
-            "api": [
-                "gpt-4",
-                "gpt-3.5-turbo",
-                "gpt-4o"
-            ]
-        }
+        """Get list of available models by provider"""
+        models = {}
+        for name, provider in self.providers.items():
+            if provider.is_available():
+                if isinstance(provider, GGUFProvider):
+                    models[name] = [provider.config.model_name]
+                elif isinstance(provider, OpenAIProvider):
+                    models[name] = [provider.config.model_name]
         return models
     
-    def test_connection(self, provider_type: str) -> bool:
-        """Test connection to specified provider"""
-        if provider_type == "local":
-            return self.local_provider.is_available()
-        elif provider_type == "api":
-            return self.api_provider.is_available() if self.api_provider else False
-        return False
+    def get_usage_stats(self) -> Dict[str, Dict[str, Any]]:
+        """Get usage statistics"""
+        return self.usage_stats.copy()
+    
+    def test_connections(self) -> Dict[str, bool]:
+        """Test all provider connections"""
+        results = {}
+        for name, provider in self.providers.items():
+            try:
+                # Test with a simple prompt
+                response = provider.generate("Hello, how are you?", max_tokens=10)
+                results[name] = "Error" not in response
+            except Exception as e:
+                results[name] = False
+                logger.error(f"❌ Connection test failed for {name}: {e}")
+        return results
 
-# Predefined configurations for common models
-MISTRAL_7B_CONFIG = LLMConfig(
-    model_name="mistralai/Mistral-7B-Instruct-v0.2",
-    model_type="local",
-    max_length=2048,
-    temperature=0.7,
-    top_p=0.9,
-    top_k=50,
-    repetition_penalty=1.1
-)
-
-GPT4_CONFIG = LLMConfig(
-    model_name="gpt-4",
-    model_type="api",
-    max_length=2048,
-    temperature=0.7,
-    top_p=0.9,
-    top_k=50,
-    repetition_penalty=1.1
-)
-
-# Usage example and testing functions
-def test_local_llm():
-    """Test function for local LLM"""
+# Convenience functions
+def create_llm_manager() -> LLMManager:
+    """Create and configure LLM manager with default providers"""
     manager = LLMManager()
     
-    # Test local model
-    print("Testing local LLM...")
-    manager.set_provider("local")
+    # Add GGUF provider if model exists
+    if CTTRANSFORMERS_AVAILABLE:
+        try:
+            gguf_provider = GGUFProvider(MISTRAL_7B_GGUF_CONFIG)
+            manager.add_provider("local", gguf_provider)
+            logger.info("✅ GGUF provider added")
+        except Exception as e:
+            logger.warning(f"⚠️  Could not add GGUF provider: {e}")
     
-    test_prompt = "Write a brief professional summary for a data scientist resume."
-    response = manager.generate(test_prompt, MISTRAL_7B_CONFIG)
+    # Add OpenAI provider if API key is available
+    if OPENAI_AVAILABLE and os.getenv('OPENAI_API_KEY'):
+        try:
+            openai_provider = OpenAIProvider(GPT4_CONFIG)
+            manager.add_provider("api", openai_provider)
+            logger.info("✅ OpenAI provider added")
+        except Exception as e:
+            logger.warning(f"⚠️  Could not add OpenAI provider: {e}")
     
-    print(f"Response: {response.content}")
-    print(f"Model: {response.model_name}")
-    print(f"Type: {response.model_type}")
-    print(f"Tokens: {response.tokens_used}")
-    if response.error:
-        print(f"Error: {response.error}")
+    return manager
 
-def test_api_llm():
-    """Test function for API LLM"""
-    manager = LLMManager()
+def create_llm_interface(provider: str = "local") -> LLMManager:
+    """Create LLM interface with specified provider"""
+    manager = create_llm_manager()
     
-    # Test API model
-    print("Testing API LLM...")
-    if manager.set_provider("api"):
-        test_prompt = "Write a brief professional summary for a data scientist resume."
-        response = manager.generate(test_prompt, GPT4_CONFIG)
-        
-        print(f"Response: {response.content}")
-        print(f"Model: {response.model_name}")
-        print(f"Type: {response.model_type}")
-        print(f"Tokens: {response.tokens_used}")
-        if response.error:
-            print(f"Error: {response.error}")
+    # Set default provider
+    if provider in manager.providers:
+        manager.set_provider(provider)
     else:
-        print("API provider not available")
-
-if __name__ == "__main__":
-    # Run tests
-    test_local_llm()
-    print("\n" + "="*50 + "\n")
-    test_api_llm() 
+        available = list(manager.providers.keys())
+        if available:
+            manager.set_provider(available[0])
+            logger.warning(f"⚠️  Provider '{provider}' not available, using '{available[0]}'")
+        else:
+            raise RuntimeError("No LLM providers available")
+    
+    return manager 

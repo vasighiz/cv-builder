@@ -1,0 +1,7 @@
+Milestone 1: Upload/resume parsing + job description input
+Milestone 2: Skill/gap detection using LLMs
+Milestone 3: Smart suggestions + auto-enhanced resume
+Milestone 4: Download-ready PDF/Docx export
+Milestone 5: Optional AI chat for feedback and Q&A
+
+ATS checker
