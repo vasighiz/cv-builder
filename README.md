@@ -1,117 +1,59 @@
-# AI-Powered Resume Builder
+# Resume Builder with Local LLM Support
 
-An automated resume builder using LLMs and AI-based strategies that takes a job description and generates optimized "Skills", "Work Experiences", and "Projects" sections for a gold-standard, ATS-compliant resume.
+A comprehensive resume builder that can generate professional resumes using both local LLM models (Mistral 7B) and API-based models (OpenAI GPT-4). This project provides a modular architecture for easy switching between local and cloud-based LLM providers.
 
-## 🎯 Project Overview
+## 🚀 Features
 
-This system extracts key skills and requirements from job descriptions and generates FAANG-level resume sections that pass ATS filters, following industry best practices from "The Ultimate Resume Handbook (2024)".
+### Core Resume Building
+- **Job Analysis**: Analyze job descriptions to extract key requirements and keywords
+- **Keyword Matching**: Match candidate skills with job requirements
+- **Resume Section Generation**: Create professional resume sections
+- **Final Resume Assembly**: Combine all sections into a complete resume
+- **Enhanced Resume Generation**: Improve existing resumes using LLM
 
-**Target Roles**: Tech industry (AI, Data Scientist, Data Analyst, Machine Learning Engineer, ML Scientist, etc.)
+### LLM Integration
+- **Local LLM Support**: Use Mistral 7B and other local models for testing
+- **API LLM Support**: Use OpenAI GPT-4 for production
+- **Easy Provider Switching**: Switch between local and API models seamlessly
+- **Usage Statistics**: Track token usage and performance metrics
+- **Reusable Components**: Modular design for use in other projects
 
-## 🏗️ Project Architecture
+### Prompt Management
+- **Organized Prompts**: Categorized prompts for different use cases
+- **Personal Prompt Library**: Save and reuse effective prompts
+- **Quick Reference**: Easy access to commonly used prompts
 
-### Core Modules
+## 📋 Requirements
 
-#### Module 1: Job Description Analyzer
-**Purpose**: Extract keywords and requirements from job descriptions
-- **Tech Stack**: Python, OpenAI API, LangChain, Pandas, JSON
-- **Features**: 
-  - Job description input (plain text)
-  - LLM-powered keyword extraction (tech skills, soft skills, responsibilities)
-  - Keyword frequency analysis
-  - JSON output of categorized keywords
-
-#### Module 2: Resume Keyword Matcher
-**Purpose**: Compare user's resume against extracted keywords
-- **Tech Stack**: Python, OpenAI API, Resume Parser libraries, Pandas
-- **Features**:
-  - Resume parsing and keyword extraction
-  - Keyword coverage analysis
-  - Missing keywords identification
-  - Recommendations for additions
-
-#### Module 3: Resume Sections Generator
-**Purpose**: Auto-generate Skills, Experience, and Projects sections
-- **Tech Stack**: Python, OpenAI API, LangChain, Template engines
-- **Features**:
-  - Skills section with relevance ranking
-  - Work experience bullet points with action verbs and quantified results
-  - Project descriptions with job-relevant language
-  - ATS-optimized formatting
-
-#### Module 4: Education & Extras Builder
-**Purpose**: Recommend Education, Certifications, Languages
-- **Tech Stack**: Python, OpenAI API, Database (SQLite/PostgreSQL)
-- **Features**:
-  - Course/certification suggestions for missing skills
-  - Education section formatting
-  - Optional sections recommendations
-
-#### Module 5: Formatting & ATS Checker
-**Purpose**: Ensure ATS compliance
-- **Tech Stack**: Python, Regular expressions, Document processing libraries
-- **Features**:
-  - ATS-friendly formatting validation
-  - Compliance scoring
-  - Formatting suggestions
-  - Font, margin, and structure checks
-
-#### Module 6: Final Resume Assembler
-**Purpose**: Combine components into final document
-- **Tech Stack**: Python, python-docx, ReportLab, Streamlit/React
-- **Features**:
-  - Document generation (.docx/.pdf)
-  - User editing interface
-  - ATS summary report export
-
-### Frontend & Backend
-- **Frontend**: Streamlit (MVP) / React (enhanced)
-- **Backend**: FastAPI (enhanced)
-- **Database**: SQLite (MVP) / PostgreSQL (enhanced)
-- **Storage**: Local files (MVP) / Cloud storage (enhanced)
-
-## 🚀 MVP Features (Phase 1)
-
-### Priority 1: Core Functionality
-1. **Job Description Analyzer** - Basic keyword extraction
-2. **Resume Sections Generator** - Skills and Experience generation
-3. **Basic ATS Checker** - Format validation
-4. **Simple Document Export** - .docx generation
-
-### Priority 2: Enhanced Features
-1. **Resume Keyword Matcher** - Gap analysis
-2. **Education & Extras Builder** - Certification suggestions
-3. **Advanced ATS Checker** - Compliance scoring
-
-### Priority 3: Advanced Features
-1. **Final Resume Assembler** - Complete document generation
-2. **User Interface** - Streamlit web app
-3. **Project Management** - Multiple resume versions
-
-## 🛠️ Installation & Setup
-
-### Prerequisites
+### System Requirements
 - Python 3.8+
-- OpenAI API key
-- Git
+- 8GB+ RAM (for local LLM models)
+- 10GB+ free disk space (for model downloads)
+- CUDA-compatible GPU (optional, for faster inference)
 
-### Setup Instructions
+### Python Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+Key dependencies include:
+- `torch>=2.0.0` - PyTorch for local model inference
+- `transformers>=4.30.0` - Hugging Face transformers
+- `openai==1.3.0` - OpenAI API client
+- `python-dotenv==1.1.0` - Environment variable management
+
+## 🛠️ Installation
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd resume-builder
+   git clone https://github.com/vasighiz/cv-builder.git
+   cd cv-builder
    ```
 
 2. **Create virtual environment**
    ```bash
    python -m venv venv
-   
-   # Windows
-   venv\Scripts\activate
-   
-   # macOS/Linux
-   source venv/bin/activate
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
 3. **Install dependencies**
@@ -121,14 +63,61 @@ This system extracts key skills and requirements from job descriptions and gener
 
 4. **Set up environment variables**
    ```bash
-   # Create .env file
-   echo "OPENAI_API_KEY=your_api_key_here" > .env
+   cp .env.example .env
+   # Edit .env with your API keys
    ```
 
-5. **Run the application**
+## 🎯 Quick Start
+
+### Using Local LLM (Mistral 7B)
+
+1. **Test local LLM setup**
    ```bash
-   python main.py
+   python test_local_llm.py
    ```
+
+2. **Run resume generation with local model**
+   ```python
+   from src.modules.llm_interface import create_llm_interface
+   
+   # Create interface with local provider
+   llm = create_llm_interface("local")
+   
+   # Generate content
+   response = llm.generate_response("Write a professional summary for a data scientist.")
+   print(response)
+   ```
+
+### Using API LLM (OpenAI)
+
+1. **Set your OpenAI API key**
+   ```bash
+   export OPENAI_API_KEY="your-api-key-here"
+   ```
+
+2. **Switch to API provider**
+   ```python
+   llm = create_llm_interface("api")
+   llm.set_provider("api")
+   ```
+
+### Complete Resume Generation
+
+```python
+from src.modules.enhanced_resume_generator import EnhancedResumeGenerator
+from pathlib import Path
+
+# Create generator with local LLM
+generator = EnhancedResumeGenerator(llm_provider="local")
+
+# Generate enhanced resume
+output_dir = Path("output")
+enhanced_resume = generator.generate_enhanced_resume(
+    job_name="data_scientist_position",
+    output_dir=output_dir,
+    llm_provider="local"  # or "api"
+)
+```
 
 ## 📁 Project Structure
 
@@ -136,82 +125,192 @@ This system extracts key skills and requirements from job descriptions and gener
 resume-builder/
 ├── src/
 │   ├── modules/
-│   │   ├── job_analyzer.py      # Module 1: Job Description Analyzer
-│   │   ├── keyword_matcher.py   # Module 2: Resume Keyword Matcher
-│   │   ├── section_generator.py # Module 3: Resume Sections Generator
-│   │   ├── education_builder.py # Module 4: Education & Extras Builder
-│   │   ├── ats_checker.py       # Module 5: Formatting & ATS Checker
-│   │   └── resume_assembler.py  # Module 6: Final Resume Assembler
-│   ├── utils/
-│   │   ├── llm_client.py        # OpenAI API wrapper
-│   │   ├── document_parser.py   # Resume parsing utilities
-│   │   └── formatter.py         # Document formatting utilities
+│   │   ├── local_llm_manager.py      # Local LLM management
+│   │   ├── llm_interface.py          # Unified LLM interface
+│   │   ├── enhanced_resume_generator.py  # Enhanced resume generation
+│   │   ├── job_analyzer.py           # Job description analysis
+│   │   ├── keyword_matcher.py        # Keyword matching
+│   │   ├── resume_sections_generator_mvp.py  # Section generation
+│   │   └── final_resume_generator.py # Final resume assembly
 │   ├── data/
-│   │   ├── keywords/            # Master keyword lists
-│   │   ├── templates/           # Resume templates
-│   │   └── samples/             # Sample job descriptions
-│   └── ui/
-│       └── streamlit_app.py     # Streamlit web interface
-├── tests/
-├── docs/
-├── requirements.txt
-├── main.py
-└── README.md
+│   │   ├── keywords/                 # Keyword databases
+│   │   ├── samples/                  # Sample job descriptions
+│   │   └── templates/                # Resume templates
+│   └── utils/                        # Utility functions
+├── .cursor/
+│   ├── prompts/                      # Organized AI prompts
+│   └── my_prompts/                   # Personal prompt library
+├── tests/                            # Test files
+├── output/                           # Generated resumes
+└── requirements.txt                  # Python dependencies
 ```
 
-## 🧪 Testing Strategy
+## 🔧 Configuration
 
-### Unit Tests
-- Individual module functionality
-- LLM response parsing
-- Document formatting validation
+### LLM Configuration
 
-### Integration Tests
-- End-to-end resume generation
-- ATS compliance validation
-- Document export functionality
+The system supports multiple LLM configurations:
 
-### Sample Data
-- Multiple job descriptions in `data/samples/`
-- Resume templates in `data/templates/`
-- Keyword lists in `data/keywords/`
+```python
+from src.modules.local_llm_manager import LLMConfig, MISTRAL_7B_CONFIG
 
-## 🔄 Development Phases
+# Default Mistral 7B configuration
+config = MISTRAL_7B_CONFIG
 
-### Phase 1: MVP (Weeks 1-2)
-- Basic job description analysis
-- Simple resume section generation
-- Document export functionality
+# Custom configuration
+custom_config = LLMConfig(
+    model_name="mistralai/Mistral-7B-Instruct-v0.2",
+    model_type="local",
+    max_length=2048,
+    temperature=0.7,
+    top_p=0.9,
+    device="auto"  # auto, cpu, cuda, mps
+)
+```
 
-### Phase 2: Enhancement (Weeks 3-4)
-- Keyword matching and gap analysis
-- Advanced ATS compliance checking
-- User interface development
+### Environment Variables
 
-### Phase 3: Advanced Features (Weeks 5-6)
-- Complete resume assembly
-- Multiple format support
-- Performance optimization
+Create a `.env` file with:
 
-## 📊 Success Metrics
+```env
+# OpenAI API (for production)
+OPENAI_API_KEY=your-openai-api-key
 
-- **ATS Compliance**: 95%+ pass rate on major ATS systems
-- **Keyword Coverage**: 90%+ relevant keyword inclusion
-- **User Satisfaction**: Resume quality improvement feedback
-- **Processing Time**: <30 seconds for complete resume generation
+# Local model settings (optional)
+LOCAL_MODEL_PATH=./models
+DEVICE=cuda  # or cpu, mps
+```
+
+## 🧪 Testing
+
+### Test Local LLM
+```bash
+python test_local_llm.py
+```
+
+### Test LLM Interface
+```bash
+python -m src.modules.llm_interface
+```
+
+### Test Enhanced Generator
+```bash
+python -m src.modules.enhanced_resume_generator
+```
+
+## 📊 Usage Statistics
+
+The system tracks usage statistics for both local and API providers:
+
+```python
+llm = create_llm_interface("local")
+stats = llm.get_usage_stats()
+
+# Example output:
+# {
+#     "local": {"calls": 5, "tokens": 1250, "errors": 0},
+#     "api": {"calls": 0, "tokens": 0, "errors": 0}
+# }
+```
+
+## 🔄 Switching Between Providers
+
+### During Runtime
+```python
+llm = create_llm_interface("local")
+
+# Switch to API
+llm.set_provider("api")
+
+# Switch back to local
+llm.set_provider("local")
+```
+
+### For Different Use Cases
+```python
+# Development/testing with local model
+generator = EnhancedResumeGenerator(llm_provider="local")
+
+# Production with API model
+generator = EnhancedResumeGenerator(llm_provider="api")
+```
+
+## 🎨 Prompt Management
+
+### Using Organized Prompts
+```python
+# Prompts are organized in .cursor/prompts/
+# - resume_analysis.md
+# - resume_generation.md
+# - ats_optimization.md
+# - general_ai_prompts.md
+```
+
+### Personal Prompt Library
+```python
+# Save effective prompts in .cursor/my_prompts/
+# - module_creation/
+# - code_generation/
+# - project_setup/
+# - debugging/
+```
+
+## 🚀 Performance Tips
+
+### Local LLM Optimization
+1. **Use GPU acceleration** when available
+2. **Adjust model parameters** for speed vs quality trade-off
+3. **Use smaller models** for faster inference
+4. **Enable model caching** to avoid re-downloading
+
+### API LLM Optimization
+1. **Batch requests** when possible
+2. **Use appropriate temperature** settings
+3. **Monitor token usage** to control costs
+4. **Implement retry logic** for failed requests
 
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
-3. Implement your changes
-4. Add tests
+3. Make your changes
+4. Add tests for new functionality
 5. Submit a pull request
 
-## 📄 License
+## 📝 License
 
-MIT License - see LICENSE file for details
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🆘 Support
+## 🆘 Troubleshooting
 
-For issues and questions, please open an issue in the repository. 
+### Common Issues
+
+1. **Local model not loading**
+   - Check available disk space
+   - Verify internet connection for model download
+   - Ensure sufficient RAM/VRAM
+
+2. **API provider not working**
+   - Verify API key is set correctly
+   - Check API quota and billing
+   - Ensure network connectivity
+
+3. **Performance issues**
+   - Use smaller models for testing
+   - Enable GPU acceleration
+   - Adjust batch sizes
+
+### Getting Help
+
+- Check the test files for usage examples
+- Review the prompt templates for guidance
+- Open an issue for bugs or feature requests
+
+## 🔮 Future Enhancements
+
+- [ ] Support for more local models (Llama, GPT-J, etc.)
+- [ ] Model fine-tuning capabilities
+- [ ] Web interface for resume generation
+- [ ] Integration with job boards
+- [ ] Multi-language support
+- [ ] Advanced ATS optimization 
