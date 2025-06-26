@@ -1,0 +1,101 @@
+{
+  "keywords": {
+    "technical_skills": [
+      "Python",
+      "SQL",
+      "scikit-learn",
+      "TensorFlow",
+      "NumPy",
+      "PyTorch"
+    ],
+    "soft_skills": [
+      "communication",
+      "problem-solving"
+    ],
+    "tools_technologies": [
+      "Tableau",
+      "Power BI",
+      "AWS",
+      "Azure"
+    ],
+    "responsibilities": [
+      "Develop and implement machine learning models",
+      "Analyze large datasets",
+      "Build predictive models",
+      "Collaborate with cross-functional teams",
+      "Communicate complex findings"
+    ],
+    "requirements": [
+      "5+ years experience in data science or machine learning",
+      "Strong programming skills in Python and SQL",
+      "Experience with statistical analysis and machine learning algorithms",
+      "Excellent communication and problem-solving skills",
+      "Master's degree in Computer Science, Statistics, or related field"
+    ],
+    "keywords_frequency": {
+      "Python": 2,
+      "SQL": 2,
+      "scikit-learn": 1,
+      "TensorFlow": 2,
+      "NumPy": 1,
+      "PyTorch": 1,
+      "communication": 2,
+      "problem-solving": 2,
+      "Tableau": 1,
+      "Power BI": 1,
+      "AWS": 1,
+      "Azure": 1
+    }
+  },
+  "role_analysis": {
+    "role_category": "Data Scientist",
+    "seniority_level": "Senior",
+    "industry_focus": "AI/ML",
+    "experience_years": "5+ years"
+  },
+  "insights": {
+    "total_technical_skills": 6,
+    "total_soft_skills": 2,
+    "total_tools": 4,
+    "most_frequent_keywords": [
+      [
+        "Python",
+        2
+      ],
+      [
+        "SQL",
+        2
+      ],
+      [
+        "TensorFlow",
+        2
+      ],
+      [
+        "communication",
+        2
+      ],
+      [
+        "problem-solving",
+        2
+      ]
+    ],
+    "skill_categories": {
+      "programming_languages": [
+        "Python",
+        "SQL",
+        "scikit-learn",
+        "TensorFlow",
+        "PyTorch"
+      ],
+      "frameworks": [
+        "scikit-learn",
+        "TensorFlow",
+        "PyTorch"
+      ],
+      "databases": []
+    }
+  },
+  "recommendations": [
+    "👑 Emphasize leadership and project management experience"
+  ]
+}

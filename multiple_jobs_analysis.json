@@ -1,0 +1,227 @@
+{
+  "Data Scientist": {
+    "keywords": {
+      "technical_skills": [
+        "Python",
+        "TensorFlow",
+        "SQL",
+        "Pandas"
+      ],
+      "soft_skills": [
+        "communication"
+      ],
+      "tools_technologies": [],
+      "responsibilities": [
+        "Develop ML models using Python and TensorFlow",
+        "Analyze data using SQL and Pandas",
+        "Communicate findings to stakeholders"
+      ],
+      "requirements": [
+        "3+ years experience"
+      ],
+      "keywords_frequency": {
+        "Python": 2,
+        "TensorFlow": 1,
+        "SQL": 1,
+        "Pandas": 1,
+        "communication": 1,
+        "3+ years experience": 1
+      }
+    },
+    "role_analysis": {
+      "role_category": "Data Scientist",
+      "seniority_level": "Mid-level",
+      "industry_focus": "AI/ML",
+      "experience_years": "3+ years"
+    },
+    "insights": {
+      "total_technical_skills": 4,
+      "total_soft_skills": 1,
+      "total_tools": 0,
+      "most_frequent_keywords": [
+        [
+          "Python",
+          2
+        ],
+        [
+          "TensorFlow",
+          1
+        ],
+        [
+          "SQL",
+          1
+        ],
+        [
+          "Pandas",
+          1
+        ],
+        [
+          "communication",
+          1
+        ]
+      ],
+      "skill_categories": {
+        "programming_languages": [
+          "Python",
+          "TensorFlow",
+          "SQL"
+        ],
+        "frameworks": [
+          "TensorFlow"
+        ],
+        "databases": []
+      }
+    },
+    "recommendations": [
+      "\ud83d\udcdd Add more technical skills to improve keyword coverage",
+      "\ud83d\udee0\ufe0f  Include relevant tools and technologies in your resume",
+      "\ud83e\udd1d Highlight soft skills like communication and teamwork"
+    ]
+  },
+  "Software Engineer": {
+    "keywords": {
+      "technical_skills": [
+        "JavaScript",
+        "Python",
+        "React",
+        "Node.js"
+      ],
+      "soft_skills": [
+        "communication",
+        "leadership",
+        "problem-solving"
+      ],
+      "tools_technologies": [],
+      "responsibilities": [
+        "Build web applications using React and Node.js",
+        "Write clean, maintainable code",
+        "Collaborate with product teams"
+      ],
+      "requirements": [
+        "5+ years experience"
+      ],
+      "keywords_frequency": {
+        "JavaScript": 1,
+        "Python": 1,
+        "React": 1,
+        "Node.js": 1,
+        "communication": 1,
+        "leadership": 1,
+        "problem-solving": 1,
+        "5+ years experience": 1
+      }
+    },
+    "role_analysis": {
+      "role_category": "Software Engineer",
+      "seniority_level": "Senior",
+      "industry_focus": "Web Development",
+      "experience_years": "5+ years"
+    },
+    "insights": {
+      "total_technical_skills": 4,
+      "total_soft_skills": 3,
+      "total_tools": 0,
+      "most_frequent_keywords": [
+        [
+          "JavaScript",
+          1
+        ],
+        [
+          "Python",
+          1
+        ],
+        [
+          "React",
+          1
+        ],
+        [
+          "Node.js",
+          1
+        ],
+        [
+          "communication",
+          1
+        ]
+      ],
+      "skill_categories": {
+        "programming_languages": [
+          "JavaScript",
+          "Python",
+          "React"
+        ],
+        "frameworks": [
+          "React"
+        ],
+        "databases": []
+      }
+    },
+    "recommendations": [
+      "\ud83d\udcdd Add more technical skills to improve keyword coverage",
+      "\ud83d\udee0\ufe0f  Include relevant tools and technologies in your resume",
+      "\ud83d\udc51 Emphasize leadership and project management experience"
+    ]
+  },
+  "ML Engineer": {
+    "keywords": {
+      "technical_skills": [
+        "Python",
+        "Spark"
+      ],
+      "soft_skills": [],
+      "tools_technologies": [
+        "Docker"
+      ],
+      "responsibilities": [
+        "Deploy ML models to production",
+        "Build data pipelines using Spark",
+        "Implement MLOps practices"
+      ],
+      "requirements": [
+        "4+ years experience"
+      ],
+      "keywords_frequency": {
+        "Python": 1,
+        "Spark": 1,
+        "Docker": 1
+      }
+    },
+    "role_analysis": {
+      "role_category": "Machine Learning Engineer",
+      "seniority_level": "Mid-level",
+      "industry_focus": "AI/ML",
+      "experience_years": "4+ years"
+    },
+    "insights": {
+      "total_technical_skills": 2,
+      "total_soft_skills": 0,
+      "total_tools": 1,
+      "most_frequent_keywords": [
+        [
+          "Python",
+          1
+        ],
+        [
+          "Spark",
+          1
+        ],
+        [
+          "Docker",
+          1
+        ]
+      ],
+      "skill_categories": {
+        "programming_languages": [
+          "Python",
+          "Spark"
+        ],
+        "frameworks": [],
+        "databases": []
+      }
+    },
+    "recommendations": [
+      "\u26a0\ufe0f  Consider adding more technical skills to your resume",
+      "\ud83d\udee0\ufe0f  Include relevant tools and technologies in your resume",
+      "\ud83e\udd1d Highlight soft skills like communication and teamwork"
+    ]
+  }
+}

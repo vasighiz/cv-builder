@@ -1,0 +1,31 @@
+About the Role
+We’re looking for a Machine Learning Research Assistant to help advance research at the intersection of
+deep learning and healthcare. Our mission is to build and scale models that make a meaningful difference in
+how healthcare is delivered — from vision-language models for medical imaging to transformers for clinical
+language understanding.
+You’ll collaborate with a small team of ML researchers and engineers to fine-tune and evaluate large-scale
+models. You’ll also contribute to research publications, open-source tooling, and production-ready ML
+pipelines.
+You’ll Get To:
+● Conduct research on applying large-scale transformer models (LLMs, LVLMs) to clinical and
+biomedical tasks
+● Modify model architectures, loss functions, and training pipelines to optimize performance on
+domain-specific datasets
+● Fine-tune and evaluate foundation models
+● Run distributed training experiments and conduct ablations to assess model robustness
+● Collaborate on papers submitted to top-tier venues
+● Translate research into working code and reproducible pipelines using PyTorch, Hugging Face,
+OpenCLIP, and DeepSpeed
+● Build tools for cross-modal learning, such as aligning medical image-text pairs or performing VQA
+tasks in clinical settings
+Minimum Qualifications:
+● MSc in Computer Science, Engineering, or a related field
+● Proficient in Python, with strong experience in PyTorch
+● Familiarity with LLMs/VLMs/LVLMs
+● Experience fine-tuning or modifying large model pipelines
+● Comfort with version control, collaborative coding, and rapid experimentation
+● Able to clearly articulate technical decisions and write high-quality documentation
+Nice to Have
+● Experience with cross-modal fine-tuning, including image-caption datasets or medical VQA
+● Contributions to open-source projects
+● First-author paper at top-tier CS/medical conferences

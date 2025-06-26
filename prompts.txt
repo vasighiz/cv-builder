@@ -1,0 +1,241 @@
+Goal:
+I want to build an automated resume builder using LLMs and AI-based strategies that takes a job description (initially for the tech industry) and generates an optimized "Skills", "Work Experiences", and "Projects" section for a gold-standard resume.
+
+The system should:
+
+Extract key skills and requirements from the job description (plain text).
+
+Generate FANNGs like "Skills", "Work Experiences", and "Projects" sections that passes ATS filters, Following instructions from a resume guidebook I provide.
+
+Eventually, we’ll expand this for non-tech jobs — but for now, focus on tech roles, AI, data scientist, data analyst, machine learning engineer, machine learning scientist, etc.
+
+
+Create a high-level project plan with clear milestones for the following modules:
+Module 1: Job Description Analyzer
+Purpose: Extract keywords and requirements from a pasted Job Description (JD).
+
+Features:
+
+paste job description.
+
+Use LLM (openAI APIs) to extract: Tech skills, Soft skills, Responsibilities, Frequency of keywords, (I will provide multiple sample job descriptions for analysis/test in the data folder) 
+Output: JSON of categorized keywords.
+
+🔹 Module 2: Resume Keyword Matcher
+Purpose: Compare user’s resume against extracted keywords.
+
+Features:
+paste user resume.
+
+Use LLM (openAI APIs) to parse resume, and compare keywords vs resume content.
+
+Output:
+
+Keywords covered, Keywords missing, Recommendations for additions
+
+🔹 Module 3: Resume Sections Generator
+Purpose: Auto-generate or rewrite Skills, Experience, and Projects sections.
+
+Features:
+
+Use job-aligned keywords to:
+
+Fill in "Skills" section (List relevant technical keywords (from master keyword list) with relevance ranking)
+
+Generate work experience bullet points with: Action verbs, Quantified results (%, $, #), Relevant job keywords, Concise 1–2 line format per point, Structure: [Company] | [Title] | [Location] | [Dates])
+
+Rewrite project descriptions using job-relevant language (Highlight tech used and outcomes (user engagement, accuracy, etc.)
+
+Optional: Explain relevance to target job)
+
+🔹 Module 4: Education & Extras Builder
+Purpose: Recommend or format Education, Certifications, Languages, etc.
+
+Features:
+
+Offer course/Certifications suggestions if user lacks required skills
+
+🔹 Module 5: Formatting & ATS Checker
+Purpose: Ensure the resume is fully ATS-compliant.
+
+Features:
+
+Resume Structure & Formatting
+Choose ATS-Friendly Formatting
+
+Use standard fonts (Arial, Times), size (11–12pt).
+
+Avoid tables, columns, headers/footers, symbols.
+
+Use standard section headings:
+Contact Info, Skills, Work Experience, Education, Projects, Certifications
+Contact Header includes: Name, location (city, state), phone, email, LinkedIn (GitHub optional).
+
+Optimize for ATS Parsing
+
+Include month/year in employment dates.
+
+Use consistent formatting and margin size. (Margins should be 0.5”-1”)
+
+Use tools or ChatGPT to check ATS compliance.
+(later for enhancement; Only use 1 page, focusing on the most relevant and impactful information)
+
+LLM or regex-based checker
+
+Output compliance score + suggestions
+
+🔹 Module 6: Final Resume Assembler
+Purpose: Combine all components into a clean .docx or .pdf.
+
+Features:
+
+Allow user edits and Create a feedback interface for collecting user manual chheck and corrections.
+
+Export final document
+
+Option to download ATS summary report
+
+🧠 Optional: Backend & Storage
+Save user profiles and master keyword lists for future use
+
+Track past job descriptions and resumes
+
+Integrate guidebook rules as a system prompt
+
+
+List the main features for each module. Prioritize features for MVP first, test it, then enhancements module by module later.
+
+In README, provide the recommended tech stack for each module and describe how each (or a group of them) one has been used in this project in one line(e.g., Python, FastAPI, LangChain, OpenAI, Pandas, Resume Parser libs, Frontend UI like Streamlit or React, etc.).
+for installing requirement, create venv
+
+****************************************************************************
+📎 Bonus Notes
+To make this even stronger long-term, consider asking later:
+
+“Design a schema for storing reusable skills, achievements, and project descriptions for a user profile (like a resume DB).”
+
+“Generate prompt templates for OpenAI to produce customized experience bullets based on job keywords.”
+
+
+
+
+Based on "The Ultimate Resume Handbook (2024)", here is a step-by-step breakdown of the actions required in the resume-writing process, which you can automate or build into your AI-powered resume builder project:
+
+✅ End-to-End Actions in the Resume-Writing Process
+🧭 Phase 1: Strategy & Job Alignment
+Identify Target Roles
+
+Select job titles and industries (initially tech).
+
+Collect multiple job descriptions for analysis.
+
+Extract Keywords from Job Descriptions
+
+Use ChatGPT to:
+
+Extract and group keywords (tech, soft skills, tools, responsibilities).
+
+Count frequency of repeated keywords.
+
+Build a Master Keyword List for each role.
+
+Compare Resume Against Keywords
+
+Identify missing keywords from resume.
+
+Integrate these into Skills/Experience/Projects sections strategically.
+
+🧱 Phase 2: Resume Structure & Formatting
+Choose ATS-Friendly Formatting
+
+Use standard fonts (Arial, Times), size (11–12pt).
+
+Avoid tables, columns, headers/footers, symbols.
+
+Use standard section headings:
+Contact Info, Skills, Work Experience, Education, Projects, Certifications
+
+Optimize for ATS Parsing
+
+Include month/year in employment dates.
+
+Use consistent formatting and margin size.
+
+Use tools or ChatGPT to check ATS compliance.
+
+✍️ Phase 3: Section-Wise Resume Writing
+6. Contact Header
+Name, location (city, state), phone, email, LinkedIn (GitHub optional).
+
+7. Skills Section
+List relevant technical keywords (from master keyword list).
+
+Optional: Languages (if relevant), group by category.
+
+8. Education Section
+Include school name, degree, location, (GPA if > 3.0).
+
+Add relevant coursework if:
+
+You're early career
+
+The job requires certain academic background
+
+9. Work Experience Section
+Use bullet points with:
+
+Action verbs
+
+Quantified results (%, $, #)
+
+Relevant job keywords
+
+Concise 1–2 line format per point
+
+Structure: [Company] | [Title] | [Location] | [Dates]
+
+10. Projects Section
+Showcase personal or GitHub projects
+
+Highlight tech used and outcomes (user engagement, accuracy, etc.)
+
+Optional: Explain relevance to target job
+
+11. Optional Sections
+Certifications, Publications, Presentations, Awards
+
+Leadership, Volunteering, Activities
+
+💡 Phase 4: For Beginners or Career Switchers
+Overcome Lack of Experience
+
+Volunteer or freelance to build projects.
+
+Include them in Work or Projects sections.
+
+Write elevator pitches for startups/clients to add credibility.
+
+🧠 Phase 5: Enhancement & Review
+Quantify Achievements
+
+Use tools, logs, analytics, or approximations to find metrics.
+
+Examples: user growth, speed gains, sales lift.
+
+Refine with ChatGPT
+
+Rewrite bullet points for clarity or impact.
+
+Add missing metrics or keywords.
+
+Create multiple variations per job.
+
+Final ATS Check
+
+Use ATS tools or ChatGPT to:
+
+Rate compliance
+
+Identify red flags or formatting issues
+
+Suggest missing sections

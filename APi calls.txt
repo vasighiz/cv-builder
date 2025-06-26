@@ -1,0 +1,31 @@
+OpenAI API Usage Locations:
+1. Module 1: Job Analyzer (job_analyzer_mvp.py)
+Purpose: Analyzes job descriptions to extract keywords and classify roles
+API Calls:
+_extract_keywords(): Extracts technical skills, soft skills, tools, responsibilities, and requirements from job descriptions
+_classify_role(): Classifies job role type, seniority level, industry focus, and experience requirements
+2. Module 2: Keyword Matcher (keyword_matcher.py)
+Purpose: Matches job keywords against resume content and performs gap analysis
+API Calls:
+parse_resume(): Parses resume text to extract structured information (skills, experience, projects, education, certifications)
+3. Module 3: Resume Sections Generator (resume_sections_generator_mvp.py)
+Purpose: Generates optimized resume sections based on job requirements
+API Calls:
+generate_skills_section(): Creates optimized skills sections with relevance scoring
+generate_experience_bullets(): Generates enhanced work experience bullet points
+generate_project_descriptions(): Creates optimized project descriptions
+4. Module 5: Final Resume Generator (final_resume_generator.py)
+Purpose: Combines all previous module outputs to create the final resume
+API Usage: NO OpenAI API calls - This module only processes and formats data from previous modules
+API Configuration:
+Environment Variable: OPENAI_API_KEY (loaded from .env file)
+Model: Uses gpt-3.5-turbo by default
+Temperature: 0.2-0.3 (low randomness for consistent results)
+Max Tokens: 1000-2000 depending on the task
+What Each API Call Does:
+Job Analysis: Converts unstructured job descriptions into structured keyword data
+Resume Parsing: Extracts structured information from resume text
+Skills Optimization: Ranks and categorizes skills based on job relevance
+Experience Enhancement: Creates quantified, keyword-rich bullet points
+Project Optimization: Generates project descriptions that align with job requirements
+The system is designed to be efficient - it only makes API calls when needed for content generation and analysis, while Module 5 (Final Resume Generator) works entirely with the processed data from previous modules without additional API calls.

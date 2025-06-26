@@ -1,0 +1,30 @@
+Data Analyst
+Description
+As a Data Analyst, you’ll be responsible for advising business area leaders on decision making and measuring the impact of investments through leveraging various sources for data analysis. You’ll apply statistics, enterprise reporting tools, and technical expertise to support tactical and operational reporting for a business area.
+
+With the backing of Rocket, Rocket Innovation Studio (RIS) is able to capitalize on the creativity and growth of a startup environment with the stability and enterprise experience of a mature company. At RIS, Canadian talent is able to collaborate, design, build, test and return a full range of custom IT solutions. RIS is leading the charge to make Windsor Canada's tech hub. Apply today to join a team that offers career growth, amazing benefits and the chance to work with leading industry professionals.
+
+About the Role
+
+Identify and analyze business problems, source relevant data, perform analysis and deliver findings via ad hoc presentations and automated reporting/dashboards
+Communicate findings to business partners for decision-making purposes
+Provide relevant and timely analysis to help senior leaders make data-driven decisions
+Analyze data with standard statistical methods, interpret results and provide written and oral summaries of data analyses
+Leverage SQL to write custom stored procedures, views and ad hoc queries to source data for business problems
+Utilize PowerBI, SSRS and other enterprise reporting tools to develop automated reports
+About you
+
+Minimum qualifications
+
+4 years of experience in a data analyst, business intelligence engineer, SQL developer or similar role
+Experience using SQL or other querying languages to create data sets, stored procedures, views, functions and performance tuning slow running queries
+Experience creating enterprise reporting and dashboards leveraging enterprise reporting tools (Tableau, SSRS, PowerBI, etc.)
+Statistical knowledge and demonstrated ability to execute end-to-end data analysis projects
+Proficiency in the Microsoft Office suite
+Preferred qualifications
+
+Experience in the title or real estate industry
+Experience utilizing PowerBI to build reporting solutions
+Experience performing prescriptive analytics
+Experience using industry standard analysis tools to perform statistical analysis (R, Python, etc.)
+Bachelor’s degree in mathematics, applied statistics or a related field

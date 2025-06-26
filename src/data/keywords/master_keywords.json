@@ -1,0 +1,48 @@
+{
+  "programming_languages": [
+    "Python",
+    "JavaScript",
+    "Java",
+    "C++",
+    "C#",
+    "R",
+    "SQL",
+    "Go",
+    "Rust",
+    "TypeScript"
+  ],
+  "frameworks": [
+    "TensorFlow",
+    "PyTorch",
+    "scikit-learn",
+    "React",
+    "Angular",
+    "Vue.js",
+    "Django",
+    "Flask",
+    "Node.js",
+    "Spring Boot"
+  ],
+  "tools": [
+    "Git",
+    "Docker",
+    "Kubernetes",
+    "AWS",
+    "Azure",
+    "GCP",
+    "Jenkins",
+    "Jira",
+    "Tableau",
+    "Power BI"
+  ],
+  "soft_skills": [
+    "Communication",
+    "Leadership",
+    "Problem Solving",
+    "Teamwork",
+    "Time Management",
+    "Adaptability",
+    "Creativity",
+    "Critical Thinking"
+  ]
+}

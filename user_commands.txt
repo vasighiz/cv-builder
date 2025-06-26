@@ -1,0 +1,17 @@
+USER COMMANDS FROM CONVERSATION
+================================
+
+1. "extract my commands in this conversation as is in a txt file"
+
+Note: This appears to be the only direct command given by the user in this conversation. The rest of the interaction involved:
+- The user requesting to build an automated resume builder using LLMs and AI strategies
+- The user requesting a high-level project plan with clear milestones for six modules
+- The user requesting a README with recommended tech stacks and setup instructions
+- The user requesting a sample implementation scaffold for Module 1 MVP
+- The user providing their OpenAI API key
+- The user requesting a more structured system with outputs saved in dedicated directories
+- The user requesting to use their own sample job description text files
+- The user requesting test results in plain text format as well
+- The user deleting some sample files
+
+The conversation primarily involved the assistant creating and modifying files based on the user's requests rather than the user executing specific commands. 

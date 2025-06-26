@@ -1,0 +1,42 @@
+Senior Data Scientist
+Description
+As a Senior Data Scientist, you’ll be responsible for performing exploratory data analysis, feature engineering and predictive modeling to provide actionable insights and strategic direction for business leaders. You’ll delve into the recesses of large data sets of structured, semi-structured and unstructured data to discover hidden knowledge about our business and to develop methods to leverage that knowledge within our line of business.
+
+At Rocket Loans, our technology team is building the next generation of digital lending platforms that are revolutionizing how people access money. Our engineering teams are working with modern web technologies, AWS cloud infrastructure, and innovative API-driven architectures to scale our operations to become the industry leader while maintaining exceptional client experiences. We're passionate about combining technical excellence with real business impact, creating systems that handle everything from application intake to credit decisioning to servicing - all while fostering an environment where engineers can grow their skills and make meaningful contributions to our clients' financial journeys.
+
+About the role
+
+Analyze, manipulate and process large sets of data
+Develop predictive and prescriptive statistical models from large sets of structured and unstructured data
+Identify methods that allow continuous and automated statistical testing to enhance the predictability of deployed models
+Develop machine learning algorithms
+Apply feature selection algorithms to models predicting outcomes of interest
+Apply sampling techniques to determine groups to be surveyed
+Compare models using statistical performance metrics, such as loss functions or proportion of explained variance
+Create graphs, charts or other visualizations to convey the results of data analysis
+Deliver oral or written presentations of the results of mathematical modeling and data analysis to stakeholders
+Identify business problems or leader objectives that can be addressed through data analysis
+Identify relationships and trends or any factors that could affect the results of research
+Identify and propose solutions to business problems using the results of data analysis
+Test, validate and reformulate models to ensure accurate prediction of outcomes of interest
+Write new functions or applications to conduct analyses
+Own the deployment of applicable models for business projects
+Communicate analyses, conclusions and solutions clearly to all audiences
+Sequence the steps involved to deliver a working model, estimate the timelines for the completion of work and communicate this information to the project manager
+Advise project teams on application improvements that will result in enhanced predictive and prescriptive models
+Develop and evangelize best practices for statistical or behavioral models
+Drive the collection of new data and the refinement of existing data sources
+Collaborate with the engineering and product teams to develop and support our internal data platform to support ongoing analyses
+Mentor and train associate data scientists
+About you
+
+5 years of experience with statistical and data mining tools and methods
+5 years of experience with supervised models (e.g., regression, neural networks) and unsupervised techniques (clustering, PCA, SVMs)
+5 years of experience working with SQL
+5 years of experience working in a UNIX environment
+5 years of experience in Python
+5 years of experience with statistical packages
+5 years of experience providing predictive and prescriptive analytics in a business setting
+Master’s degree in mathematics, statistics, computer science or a related field or equivalent experience
+Advanced understanding of data visualization libraries
+Advanced understanding of statistical methodologies for modeling and business analytics

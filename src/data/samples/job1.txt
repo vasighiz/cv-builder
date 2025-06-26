@@ -1,0 +1,19 @@
+Where You Fit In
+We are seeking a Machine Learning Scientist to help expand our AI workbench for drug discovery. Pioneered by our company, the application of machine learning and AI to drug discovery is a rapidly advancing field with many unsolved and exciting challenges.  Whether you're an early-career researcher or a seasoned expert, you will work with an interdisciplinary team of scientists and engineers to develop state-of-the-art machine learning models to decode nucleic acid and protein-level mechanisms, analyze large biological datasets, and support the design of therapeutic molecules. This is an opportunity to work at the interface of machine learning and computational biology, making impactful contributions to drug discovery and therapeutic development. 
+Key Responsibilities
+Develop and implement advanced machine learning models for RNA biology, systems biology, and structural biology to solve frontier challenges in drug discovery.
+Collaborate with cross-functional teams (e.g., ML engineering, target discovery, and experimental biology) to drive research projects that identify novel drug targets and preclinical candidates.
+Design and execute computational and experimental studies to validate and improve model predictions.
+Stay informed about the latest advancements in machine learning and computational biology, and apply them to real-world challenges.
+Share research findings through presentations, publications, and technical discussions.
+Basic Qualifications
+PhD in Machine Learning, Computational Biology, Bioinformatics, Computer Science, or a related technical field (MSc with significant experience also considered).
+Extensive experience in designing, training, debugging, and evaluating machine learning models using frameworks like PyTorch, TensorFlow, or JAX.
+Strong foundation in mathematics and statistics, including linear algebra, probability, and optimization.
+Excellent scientific writing and communication skills.
+Preferred Qualifications
+Experience in computational biology, genomics, or drug discovery.
+Familiarity with RNA biology, structural biology, or systems biology.
+Proven track record of publishing in top-tier conferences or journals.
+Experience developing machine learning models for production, particularly in drug design.
+Proficiency with cloud computing platforms (e.g., AWS, GCP) or distributed computing frameworks.
